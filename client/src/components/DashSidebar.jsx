@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { signoutSuccess } from "../redux/user/userSlice";
 import { BsFillHouseAddFill } from "react-icons/bs";
+import { FaFileCircleCheck } from "react-icons/fa6";
 
 export default function DashSidebar() {
   const { currentUser } = useSelector((state) => state.user);
@@ -198,6 +199,17 @@ export default function DashSidebar() {
 
             {currentUser.role === "Director" && (
               <>
+                <Link to="/dashboard?tab=approvels">
+                  <Sidebar.Item
+                    className="mt-2 mb-2"
+                    icon={FaFileCircleCheck}
+                    active={tab === "approvels"}
+                    label="3"
+                    labelColor="red"
+                  >
+                    Approvels
+                  </Sidebar.Item>
+                </Link>
                 <Link to="/dashboard?tab=products">
                   <Sidebar.Item
                     className="mt-2 mb-2"

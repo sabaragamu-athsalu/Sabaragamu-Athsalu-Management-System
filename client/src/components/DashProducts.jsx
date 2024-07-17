@@ -58,8 +58,6 @@ export default function DashProducts() {
   // Pagination
 
   const fetchProducts = async () => {
-  
-
     try {
       setCreateLoding(true);
       const res = await fetch(`/api/product/getallproducts`);

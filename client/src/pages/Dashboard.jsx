@@ -24,6 +24,7 @@ import DashSalesReport from "../components/DashSalesReport";
 import StockQADashboardHome from "../components/stockqa/StockQADashboardHome";
 import DashStoreKeeperProducts from "../components/storeKeeper/DashStoreKeeperProducts";
 import DashStoreKeeperSendStock from "../components/storeKeeper/DashStoreKeeperSendStock";
+import DashProductApprovels from "../components/director/DashProductApprovels";
 // import StoreKeeperDashboardHome from "../components/storeKeeper/StoreKeeperDashboardHome";
 
 export default function Dashboard() {
@@ -134,6 +135,10 @@ export default function Dashboard() {
 
       {tab === "returnItems" && currentUser.role === "Director" && (
         <DashCustomerReturnItem />
+      )}
+
+      {tab === "approvels" && currentUser.role === "Director" && (
+        <DashProductApprovels />
       )}
 
       {tab === "returnItems" && currentUser.role === "Admin" && (
