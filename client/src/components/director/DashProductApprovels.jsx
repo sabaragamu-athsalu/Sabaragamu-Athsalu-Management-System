@@ -178,8 +178,33 @@ export default function DashProductApprovels() {
       const data = await res.json();
       if (res.ok) {
         selectedTransfer.status = "approved";
+        setShowModal(false);
         fetchShopItems();
         Toast.success("Product approved successfully!");
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handelReject = async (id, fromId, itemId, shopId, quantity) => {
+    console.log(id, fromId, itemId, shopId, quantity);
+    try {
+      const res = await fetch(
+        `/api/shop-item/rejectitem/${id}/${fromId}/${itemId}/${shopId}/${quantity}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await res.json();
+      if (res.ok) {
+        selectedTransfer.status = "rejected";
+        setShowModal1(false);
+        fetchShopItems();
+        Toast.success("Product rejected successfully!");
       }
     } catch (error) {
       console.log(error.message);
@@ -444,12 +469,13 @@ export default function DashProductApprovels() {
 
                           {selectedTransfer ? (
                             <>
-                              {selectedTransfer.status != "approved" ? (
+                              {selectedTransfer.status != "approved" &&
+                              selectedTransfer.status != "rejected" ? (
                                 <Button.Group>
                                   <Button
                                     color="green"
                                     onClick={() => {
-                                      handleApprove(selectedTransfer.id);
+                                      setShowModal(true);
                                     }}
                                   >
                                     <GoChecklist className="mr-3 h-4 w-4" />
@@ -458,7 +484,7 @@ export default function DashProductApprovels() {
                                   <Button
                                     color="red"
                                     onClick={() => {
-                                      setSelectBillPrint(selectedBill);
+                                      setShowModal1(true);
                                     }}
                                   >
                                     <RiFileCloseLine className="mr-3 h-4 w-4" />
@@ -479,188 +505,91 @@ export default function DashProductApprovels() {
                 </div>
               </Modal>
 
-              <Modal show={openModal} onClose={() => setOpenModal(false)}>
+              <Modal
+                show={showModal}
+                onClose={() => setShowModal(false)}
+                popup
+                size="md"
+              >
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Modal.Header>Send Item Stock</Modal.Header>
+                  <Modal.Header />
                   <Modal.Body>
-                    <div className="space-y-6">
-                      <form
-                        onSubmit={handleSubmit}
-                        className="flex flex-col flex-grow gap-4"
-                      >
-                        {createUserError && (
-                          <Alert color="failure">{createUserError}</Alert>
-                        )}
+                    <div className="text-center">
+                      <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+                      <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+                        Are you sure you want to approve this product?
+                      </h3>
+                      <div className="flex justify-center gap-4">
+                        <Button
+                          color="failure"
+                          onClick={() => {
+                            handleApprove(selectedTransfer.id);
+                          }}
+                        >
+                          Yes, I'm sure
+                        </Button>
+                        <Button
+                          color="gray"
+                          onClick={() => setShowModal(false)}
+                        >
+                          No, cancel
+                        </Button>
+                      </div>
+                    </div>
+                  </Modal.Body>
+                </motion.div>
+              </Modal>
 
-                        <div className="flex gap-5 mb-4">
-                          <div className="w-full ">
-                            {openModal ? (
-                              <>
-                                <div className="flex gap-2 w-full">
-                                  <div className="w-full">
-                                    <div className="mb-2 block">
-                                      <h1 className="text-lg text-gray-500">
-                                        <b>Item Details</b>
-                                      </h1>
-                                    </div>
-
-                                    <div className="mb-2 block">
-                                      <h1 className="text-md text-gray-700">
-                                        <b>Name : </b>{" "}
-                                        {selectedProduct.item.itemName}
-                                      </h1>
-                                    </div>
-
-                                    <div className="mb-2 block">
-                                      <h1 className="text-md text-gray-700">
-                                        <b>Price : </b> Rs.{" "}
-                                        {selectedProduct.item.itemPrice}
-                                      </h1>
-                                    </div>
-
-                                    <div className=" block">
-                                      <h1 className="text-md text-gray-700">
-                                        <div className="flex gap-3 ">
-                                          <p>
-                                            <b>Quantity : </b>{" "}
-                                          </p>
-                                          <Badge
-                                            className="pl-3 pr-3"
-                                            color="green"
-                                            icon={HiCheckCircle}
-                                          >
-                                            {selectedProduct.quantity} in stock
-                                          </Badge>
-                                        </div>
-                                      </h1>
-                                    </div>
-                                  </div>
-
-                                  <div className="w-full">
-                                    <div className="mb-2 block">
-                                      <h1 className="text-lg text-gray-500">
-                                        <b>Send Details</b>
-                                      </h1>
-                                    </div>
-
-                                    <div className="mb-2 block">
-                                      <h1 className="text-md text-gray-700">
-                                        <b>Shop Name : </b>{" "}
-                                        {shops.map((shop) => {
-                                          if (shop.id == formData.shopId) {
-                                            return shop.shopName;
-                                          }
-                                        })}
-                                      </h1>
-                                    </div>
-
-                                    <div className="block">
-                                      <h1 className="text-md text-gray-700">
-                                        <div className="flex gap-3 ">
-                                          <p>
-                                            <b>Quantity : </b>{" "}
-                                          </p>
-                                          {formData.quantity > 0 ? (
-                                            <Badge
-                                              size="sm"
-                                              className="pl-3 pr-3"
-                                              color={
-                                                formData.quantity ==
-                                                selectedProduct.quantity
-                                                  ? "red"
-                                                  : "yellow"
-                                              }
-                                              icon={HiCheckCircle}
-                                            >
-                                              {formData.quantity} Items
-                                            </Badge>
-                                          ) : (
-                                            ""
-                                          )}
-                                        </div>
-                                      </h1>
-                                    </div>
-                                  </div>
-                                </div>
-                              </>
-                            ) : (
-                              <></>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="flex gap-2 mb-4">
-                          <div className="w-1/2">
-                            <div className="mb-2 block">
-                              <Label value="Item Quantity" />
-                            </div>
-
-                            <TextInput
-                              id="quantity"
-                              type="number"
-                              placeholder="10"
-                              required
-                              shadow
-                              onChange={handleChange}
-                              value={formData.quantity}
-                              defaultValue={1}
-                            />
-                          </div>
-                          <div className="w-1/2">
-                            <div className="mb-2 block">
-                              <Label value="Select Shop" />
-                            </div>
-                            <Select
-                              id="shopId"
-                              onChange={(e) =>
-                                setFormData({
-                                  ...formData,
-                                  shopId: e.target.value,
-                                })
-                              }
-                              required
-                              shadow
-                            >
-                              <option value="">Select a Shop</option>
-                              {shops.map((shop) => (
-                                <option key={shop.id} value={shop.id}>
-                                  {shop.shopName}
-                                </option>
-                              ))}
-                            </Select>
-                          </div>
-                        </div>
-
-                        <div className="flex gap-2 justify-end">
-                          <Button
-                            color="blue"
-                            type="submit"
-                            disabled={createLoding}
-                          >
-                            {createLoding ? (
-                              <>
-                                <Spinner size="sm" />
-                                <span className="pl-3">Loading...</span>
-                              </>
-                            ) : (
-                              "Send Stock"
-                            )}
-                            <HiPaperAirplane className="ml-2 h-4 w-4 rotate-90" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            color="gray"
-                            onClick={() => setOpenModal(false)}
-                          >
-                            Decline
-                          </Button>
-                        </div>
-                      </form>
+              <Modal
+                show={showModal1}
+                onClose={() => setShowModal1(false)}
+                popup
+                size="md"
+              >
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Modal.Header />
+                  <Modal.Body>
+                    <div className="text-center">
+                      <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+                      <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+                        Are you sure you want to reject this product?
+                        {
+                          // selectedTransfer.fromshop.seller.firstname
+                          selectedTransfer ? selectedTransfer.itemId : ""
+                        }
+                      </h3>
+                      <div className="flex justify-center gap-4">
+                        <Button
+                          color="failure"
+                          onClick={() => {
+                            handelReject(
+                              selectedTransfer.id,
+                              selectedTransfer.fromId,
+                              selectedTransfer.itemId,
+                              selectedTransfer.shop.id,
+                              selectedTransfer.quantity
+                            );
+                          }}
+                        >
+                          Yes, I'm sure
+                        </Button>
+                        <Button
+                          color="gray"
+                          onClick={() => setShowModal1(false)}
+                        >
+                          No, cancel
+                        </Button>
+                      </div>
                     </div>
                   </Modal.Body>
                 </motion.div>

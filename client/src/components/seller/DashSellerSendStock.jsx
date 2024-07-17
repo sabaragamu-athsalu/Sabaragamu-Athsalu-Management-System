@@ -75,7 +75,9 @@ export default function DashSellerSendStock() {
 
   // Filter products based on search query
   const filteredProducts = allProducts.filter((product) =>
-    product.item.itemName.toLowerCase().includes(searchQuery.toLowerCase())
+    product.itemDetails.itemName
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
   );
 
   useEffect(() => {
@@ -235,14 +237,14 @@ export default function DashSellerSendStock() {
                                     <div className="mb-2 block">
                                       <h1 className="text-md text-gray-700">
                                         <b>Name : </b>{" "}
-                                        {selectedProduct.item.itemName}
+                                        {selectedProduct.itemDetails.itemName}
                                       </h1>
                                     </div>
 
                                     <div className="mb-2 block">
                                       <h1 className="text-md text-gray-700">
                                         <b>Price : </b> Rs.{" "}
-                                        {selectedProduct.item.itemPrice}
+                                        {selectedProduct.itemDetails.itemPrice}
                                       </h1>
                                     </div>
 
@@ -408,11 +410,15 @@ export default function DashSellerSendStock() {
                       <Table.Body className="divide-y" key={product.id}>
                         <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
                           <TableCell>
-                            <b>{product.item.itemName}</b>
+                            <b>{product.itemDetails.itemName}</b>
                           </TableCell>
-                          <TableCell>{product.item.sku}</TableCell>
-                          <TableCell>{product.item.manufacturer}</TableCell>
-                          <TableCell>Rs. {product.item.itemPrice}</TableCell>
+                          <TableCell>{product.itemDetails.sku}</TableCell>
+                          <TableCell>
+                            {product.itemDetails.manufacturer}
+                          </TableCell>
+                          <TableCell>
+                            Rs. {product.itemDetails.itemPrice}
+                          </TableCell>
                           <TableCell>
                             <div className="flex flex-wrap gap-2">
                               <Badge

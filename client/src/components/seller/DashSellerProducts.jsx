@@ -106,11 +106,11 @@ export default function DashSellerProducts() {
                   <Table.Body className="divide-y" key={product.id}>
                     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
                       <TableCell>
-                        <b>{product.item.itemName}</b>
+                        <b>{product.itemDetails.itemName}</b>
                       </TableCell>
-                      <TableCell>{product.item.sku}</TableCell>
-                      <TableCell>{product.item.itemType}</TableCell>
-                      <TableCell>{product.item.manufacturer}</TableCell>
+                      <TableCell>{product.itemDetails.sku}</TableCell>
+                      <TableCell>{product.itemDetails.itemType}</TableCell>
+                      <TableCell>{product.itemDetails.manufacturer}</TableCell>
                       <TableCell>
                         <Badge
                           className="pl-3 pr-3 w-28"
@@ -151,7 +151,7 @@ export default function DashSellerProducts() {
                           <p className=" capitalize">{product.status}</p>
                         </Badge>
                       </TableCell>
-                      <TableCell>Rs. {product.item.itemPrice}</TableCell>
+                      <TableCell>Rs. {product.itemDetails.itemPrice}</TableCell>
                     </TableRow>
                   </Table.Body>
                 ))}

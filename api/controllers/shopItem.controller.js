@@ -151,10 +151,6 @@ function rejectShopItemoShop(req, res) {
                 models.ShopItem.update(
                   {
                     quantity: quantity,
-                    status: "approved",
-                    lastreceivedquantity: req.params.quantity,
-                    fromType: "shoptoshop",
-                    fromId: req.params.fromId,
                   },
                   {
                     where: {
@@ -179,10 +175,6 @@ function rejectShopItemoShop(req, res) {
                   shopId: req.params.shopId,
                   itemId: req.params.itemId,
                   quantity: req.params.quantity,
-                  status: "approved",
-                  lastreceivedquantity: req.params.quantity,
-                  fromType: "shoptoshop",
-                  fromId: req.params.fromId,
                 })
                   .then((data) => {
                     res.status(200).json({
@@ -260,7 +252,7 @@ function getShopsItems(req, res) {
       },
       {
         model: models.Product,
-        as: "item",
+        as: "itemDetails",
 
         include: [
           {
