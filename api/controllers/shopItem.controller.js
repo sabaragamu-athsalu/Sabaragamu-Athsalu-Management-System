@@ -186,10 +186,22 @@ function getAllShopsItems(req, res) {
       {
         model: models.Shop,
         as: "shop",
+        include: [
+          {
+            model: models.User,
+            as: "seller",
+          },
+        ],
       },
       {
         model: models.Shop,
         as: "fromshop",
+        include: [
+          {
+            model: models.User,
+            as: "seller",
+          },
+        ],
       },
       {
         model: models.Product,
@@ -299,10 +311,13 @@ function buyItems(req, res) {
     });
 }
 
+function shopItemApprove(req, res) {}
+
 module.exports = {
   getAllShopsItems: getAllShopsItems,
   getShopsItems: getShopsItems,
   getShopsItemId: getShopsItemId,
   sendShopItemoShop: sendShopItemoShop,
   buyItems: buyItems,
+  shopItemApprove: shopItemApprove,
 };

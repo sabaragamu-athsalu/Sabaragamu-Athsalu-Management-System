@@ -21,5 +21,6 @@ router.get(
   verifyToken,
   shopItemController.getAllShopsItems
 );
+router.put("/approveitem/:id", verifyToken, shopItemController.shopItemApprove);
 
 module.exports = router;
