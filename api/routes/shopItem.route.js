@@ -22,5 +22,10 @@ router.get(
   shopItemController.getAllShopsItems
 );
 router.put("/approveitem/:id", verifyToken, shopItemController.shopItemApprove);
+router.put(
+  "/rejectitem/:id/:shopId/:itemId/:fromId/:quantity",
+  verifyToken,
+  shopItemController.rejectShopItemoShop
+);
 
 module.exports = router;
