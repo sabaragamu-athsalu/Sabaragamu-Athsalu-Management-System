@@ -50,6 +50,8 @@ import { MdOutlineAccessTimeFilled } from "react-icons/md";
 import { MdCancel } from "react-icons/md";
 import { FaFileCircleCheck } from "react-icons/fa6";
 import { GoChecklist } from "react-icons/go";
+import Logolight from "../../assets/logolight.png";
+import { RiFileCloseLine } from "react-icons/ri";
 
 export default function DashProductApprovels() {
   const { currentUser } = useSelector((state) => state.user);
@@ -68,12 +70,17 @@ export default function DashProductApprovels() {
   const [sendItemId, setSendItemId] = useState(null);
 
   const [openModal, setOpenModal] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const theme = useSelector((state) => state.theme.theme);
+
   const [createUserError, setCreateUserError] = useState(null);
   const [createLoding, setCreateLoding] = useState(false);
   const [seller, setSeller] = useState([]);
   const [formData, setFormData] = useState({});
 
   const [shopId, setShopId] = useState([]);
+
+  const [selectedTransfer, setSelectedTransfer] = useState(null);
 
   // Function to handle search query change
   const handleSearchChange = (e) => {
@@ -193,6 +200,265 @@ export default function DashProductApprovels() {
                   />
                 </div>
               </div>
+
+              <Modal show={isModalOpen} onClose={() => setIsModalOpen(false)}>
+                <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+                  <div className="relative w-full max-w-lg mx-auto my-6">
+                    <div className="relative flex flex-col w-full bg-white border rounded-lg shadow-lg outline-none focus:outline-none">
+                      <div className="flex items-center justify-between p-5 border-b border-solid rounded-t border-gray-300">
+                        <h3 className="text-2xl font-semibold">
+                          {theme === "light" ? (
+                            <img
+                              src={Logolight}
+                              className="h-10"
+                              alt="Flowbite Logo"
+                            />
+                          ) : (
+                            <img
+                              src={Logolight}
+                              className="h-10"
+                              alt="Flowbite Logo"
+                            />
+                          )}
+                        </h3>
+                        <div className="ml-4 text-right">
+                          <h1 className="text-xl font-bold">
+                            Product Transfer Invoice
+                          </h1>
+                          <div>
+                            Date :{" "}
+                            {selectedTransfer
+                              ? new Date(
+                                  selectedTransfer.updatedAt
+                                ).toLocaleDateString()
+                              : ""}
+                          </div>
+                          <div>
+                            Time :{" "}
+                            {selectedTransfer
+                              ? new Date(
+                                  selectedTransfer.updatedAt
+                                ).toLocaleTimeString()
+                              : ""}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="relative p-5 flex-auto">
+                        <div className="flex ">
+                          <h2 className="text-lg font-bold mb-4">Status:</h2>
+                          <b>
+                            {selectedTransfer ? (
+                              <Badge
+                                className="pl-3 pr-3 w-20 ml-3"
+                                color={
+                                  selectedTransfer.status === "approved"
+                                    ? "green"
+                                    : selectedTransfer.status === "pending"
+                                    ? "yellow"
+                                    : selectedTransfer.status === "rejected"
+                                    ? "red"
+                                    : selectedTransfer.status === "in_review"
+                                    ? "blue"
+                                    : "grey" // Default color if none of the conditions match
+                                }
+                                icon={
+                                  selectedTransfer.status === "approved"
+                                    ? HiCheckCircle
+                                    : selectedTransfer.status === "pending"
+                                    ? MdOutlineAccessTimeFilled
+                                    : selectedTransfer.status === "rejected"
+                                    ? MdCancel
+                                    : selectedTransfer.status === "in_review"
+                                    ? MdOutlineAccessTimeFilled
+                                    : MdOutlineAccessTimeFilled // Default color if none of the conditions match
+                                }
+                              >
+                                <p className=" capitalize">
+                                  {selectedTransfer.status}
+                                </p>
+                              </Badge>
+                            ) : (
+                              ""
+                            )}
+                          </b>
+                        </div>
+
+                        <div className="flex">
+                          <div className="mb-8">
+                            <h2 className="text-lg font-bold mb-4">
+                              Send Shop:
+                            </h2>
+                            <div className="text-gray-700 mb-2">
+                              <b>Shop Name:</b>{" "}
+                              {selectedTransfer
+                                ? selectedTransfer.fromshop.shopName
+                                : ""}
+                            </div>
+                            <div className="text-gray-700 mb-2">
+                              <b>Seller Name:</b>{" "}
+                              {selectedTransfer ? (
+                                <>
+                                  {selectedTransfer.fromshop.seller.firstname}{" "}
+                                  {selectedTransfer.fromshop.seller.lastname}{" "}
+                                </>
+                              ) : (
+                                ""
+                              )}
+                            </div>
+                            <div className="text-gray-700 mb-2">
+                              <b>Phone:</b>{" "}
+                              {selectedTransfer
+                                ? selectedTransfer.fromshop.phone
+                                : ""}
+                            </div>
+                            <div className="text-gray-700">
+                              <b>Address:</b>{" "}
+                              {selectedTransfer
+                                ? selectedTransfer.fromshop.address
+                                : ""}
+                            </div>
+                          </div>
+
+                          <div className="mb-8 ml-8">
+                            {" "}
+                            {/* Added ml-8 for margin left */}
+                            <h2 className="text-lg font-bold mb-4">
+                              Received Shop:
+                            </h2>
+                            <div className="text-gray-700 mb-2">
+                              <b>Shop Name:</b>{" "}
+                              {selectedTransfer
+                                ? selectedTransfer.shop.shopName
+                                : ""}
+                            </div>
+                            <div className="text-gray-700 mb-2">
+                              <b>Seller Name:</b>{" "}
+                              {selectedTransfer ? (
+                                <>
+                                  {selectedTransfer.shop.seller.firstname}{" "}
+                                  {selectedTransfer.shop.seller.lastname}{" "}
+                                </>
+                              ) : (
+                                ""
+                              )}
+                            </div>
+                            <div className="text-gray-700 mb-2">
+                              <b>Phone:</b>{" "}
+                              {selectedTransfer
+                                ? selectedTransfer.shop.phone
+                                : ""}
+                            </div>
+                            <div className="text-gray-700">
+                              <b>Address:</b>{" "}
+                              {selectedTransfer
+                                ? selectedTransfer.shop.address
+                                : ""}
+                            </div>
+                          </div>
+                        </div>
+
+                        <hr className="mb-2" />
+                        <br></br>
+                        <table className="w-full mb-8">
+                          <thead>
+                            <tr>
+                              <th className="text-left font-bold text-gray-700">
+                                Item Name
+                              </th>
+                              <th className="text-right font-bold text-gray-700">
+                                Quantity
+                              </th>
+                              <th className="text-right font-bold text-gray-700">
+                                Unit Price
+                              </th>
+                              <th className="text-right font-bold text-gray-700">
+                                Total Price
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td className="text-left text-gray-700">
+                                {selectedTransfer
+                                  ? selectedTransfer.sendItem.itemName
+                                  : ""}
+                              </td>
+                              <td className="text-right text-gray-700 items-end">
+                                {selectedTransfer
+                                  ? selectedTransfer.quantity
+                                  : ""}{" "}
+                              </td>
+
+                              <td className="text-right text-gray-700">
+                                Rs.{" "}
+                                {selectedTransfer
+                                  ? selectedTransfer.sendItem.itemPrice
+                                  : ""}
+                              </td>
+                              <td className="text-right text-gray-700">
+                                <b>
+                                  Rs.{" "}
+                                  {selectedTransfer
+                                    ? (
+                                        selectedTransfer.sendItem.itemPrice *
+                                        selectedTransfer.quantity
+                                      ).toFixed(2)
+                                    : ""}
+                                </b>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+
+                        <div className="flex items-center justify-between p-6 border-t border-solid rounded-tl-lg rounded-tr-lg rounded-b border-gray-300">
+                          <Button.Group>
+                            <Button
+                              onClick={() => setIsModalOpen(false)}
+                              color="gray"
+                              className="rounded-lg"
+                            >
+                              <IoMdClose className="mr-3 h-4 w-4" />
+                              Close
+                            </Button>
+                          </Button.Group>
+
+                          {selectedTransfer ? (
+                            <>
+                              {selectedTransfer.status != "approved" ? (
+                                <Button.Group>
+                                  <Button
+                                    color="green"
+                                    onClick={() => {
+                                      setSelectedBillExport(selectedBill);
+                                    }}
+                                  >
+                                    <GoChecklist className="mr-3 h-4 w-4" />
+                                    Approve
+                                  </Button>
+                                  <Button
+                                    color="red"
+                                    onClick={() => {
+                                      setSelectBillPrint(selectedBill);
+                                    }}
+                                  >
+                                    <RiFileCloseLine className="mr-3 h-4 w-4" />
+                                    Rejected
+                                  </Button>
+                                </Button.Group>
+                              ) : (
+                                ""
+                              )}
+                            </>
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Modal>
 
               <Modal show={openModal} onClose={() => setOpenModal(false)}>
                 <motion.div
@@ -380,6 +646,7 @@ export default function DashProductApprovels() {
                   </Modal.Body>
                 </motion.div>
               </Modal>
+
               {createLoding ? (
                 <div className="flex justify-center items-center h-96">
                   <Spinner size="xl" />
@@ -474,7 +741,7 @@ export default function DashProductApprovels() {
                                 {product.status === "approved" ? (
                                   <Button
                                     onClick={() => {
-                                      setSelectedBill(bill);
+                                      setSelectedTransfer(product);
                                       setIsModalOpen(true);
                                     }}
                                     className="w-28"
@@ -486,14 +753,14 @@ export default function DashProductApprovels() {
                                 ) : (
                                   <Button
                                     onClick={() => {
-                                      setSelectedBill(bill);
+                                      setSelectedTransfer(product);
                                       setIsModalOpen(true);
                                     }}
                                     className="w-28"
-                                    color="yellow"
+                                    color="green"
                                   >
                                     <GoChecklist className="mr-3 h-4 w-4" />
-                                    Approve
+                                    View
                                   </Button>
                                 )}
                               </TableCell>
