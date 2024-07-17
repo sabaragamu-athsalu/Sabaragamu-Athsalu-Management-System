@@ -556,63 +556,73 @@ export default function DashPOS() {
                     {filteredProducts.map((product) => (
                       <Table.Body className="divide-y" key={product.id}>
                         {product.quantity > 0 && (
-                          <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                            <TableCell>
-                              <b>{product.item.itemName}</b>
-                            </TableCell>
-                            <TableCell>{product.item.sku}</TableCell>
-                            <TableCell>{product.item.manufacturer}</TableCell>
-                            <TableCell>Rs. {product.item.itemPrice}</TableCell>
-                            <TableCell>
-                              <Badge
-                                className="pl-3 pr-3"
-                                color={product.quantity > 0 ? "green" : "red"}
-                                icon={
-                                  product.quantity > 0
-                                    ? HiCheckCircle
-                                    : HiXCircle
-                                }
-                              >
-                                {product.quantity} in stock
-                              </Badge>
-                            </TableCell>
-                            <TableCell></TableCell>
-                            <TableCell>
-                              {product.quantity > 0 ? (
-                                <Button
-                                  //disabled={selectedCustomer <= 0}
-                                  onClick={() =>
-                                    handleAddToSelected(product.id)
-                                  }
-                                  color={
-                                    selectedProducts.some(
-                                      (p) => p.id === product.id
-                                    )
-                                      ? "green"
-                                      : "gray"
-                                  }
-                                >
-                                  {selectedProducts.some(
-                                    (p) => p.id === product.id
-                                  ) ? (
-                                    <>
-                                      Added
-                                      <HiOutlineCheckCircle className="ml-3 h-4 w-4" />
-                                    </>
+                          <>
+                            {product.status === "approved" && (
+                              <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                                <TableCell>
+                                  <b>{product.item.itemName}</b>
+                                </TableCell>
+                                <TableCell>{product.item.sku}</TableCell>
+                                <TableCell>
+                                  {product.item.manufacturer}
+                                </TableCell>
+                                <TableCell>
+                                  Rs. {product.item.itemPrice}
+                                </TableCell>
+                                <TableCell>
+                                  <Badge
+                                    className="pl-3 pr-3"
+                                    color={
+                                      product.quantity > 0 ? "green" : "red"
+                                    }
+                                    icon={
+                                      product.quantity > 0
+                                        ? HiCheckCircle
+                                        : HiXCircle
+                                    }
+                                  >
+                                    {product.quantity} in stock
+                                  </Badge>
+                                </TableCell>
+                                <TableCell></TableCell>
+                                <TableCell>
+                                  {product.quantity > 0 ? (
+                                    <Button
+                                      //disabled={selectedCustomer <= 0}
+                                      onClick={() =>
+                                        handleAddToSelected(product.id)
+                                      }
+                                      color={
+                                        selectedProducts.some(
+                                          (p) => p.id === product.id
+                                        )
+                                          ? "green"
+                                          : "gray"
+                                      }
+                                    >
+                                      {selectedProducts.some(
+                                        (p) => p.id === product.id
+                                      ) ? (
+                                        <>
+                                          Added
+                                          <HiOutlineCheckCircle className="ml-3 h-4 w-4" />
+                                        </>
+                                      ) : (
+                                        <>
+                                          Add
+                                          <HiOutlineArrowCircleRight className="ml-3 h-4 w-4" />
+                                        </>
+                                      )}
+                                    </Button>
                                   ) : (
-                                    <>
-                                      Add
-                                      <HiOutlineArrowCircleRight className="ml-3 h-4 w-4" />
-                                    </>
+                                    <Button color="gray" disabled>
+                                      Out of stock
+                                    </Button>
                                   )}
-                                </Button>
-                              ) : (
-                                <Button color="gray" disabled>
-                                  Out of stock
-                                </Button>
-                              )}
-                            </TableCell>
-                          </TableRow>
+                                </TableCell>
+                              </TableRow>
+                            )}
+                          </>
                         )}
                       </Table.Body>
                     ))}

@@ -41,6 +41,8 @@ import {
   HiCheckCircle,
 } from "react-icons/hi";
 import { MdAdd, MdRemove } from "react-icons/md";
+import { MdOutlineAccessTimeFilled } from "react-icons/md";
+import { MdCancel } from "react-icons/md";
 
 export default function DashSellerSendStock() {
   const { currentUser } = useSelector((state) => state.user);
@@ -396,6 +398,7 @@ export default function DashSellerSendStock() {
                       <TableHeadCell>Manufacturer</TableHeadCell>
                       <TableHeadCell>Price</TableHeadCell>
                       <TableHeadCell>Quantity</TableHeadCell>
+                      <TableHeadCell>Status</TableHeadCell>
                       <TableHeadCell></TableHeadCell>
                       <TableHeadCell>
                         <span className="sr-only">Edit</span>
@@ -425,6 +428,35 @@ export default function DashSellerSendStock() {
                               </Badge>
                             </div>
                           </TableCell>
+                          <TableCell>
+                            <Badge
+                              className="pl-3 pr-3 w-28"
+                              color={
+                                product.status === "approved"
+                                  ? "green"
+                                  : product.status === "pending"
+                                  ? "yellow"
+                                  : product.status === "rejected"
+                                  ? "red"
+                                  : product.status === "in_review"
+                                  ? "blue"
+                                  : "grey" // Default color if none of the conditions match
+                              }
+                              icon={
+                                product.status === "approved"
+                                  ? HiCheckCircle
+                                  : product.status === "pending"
+                                  ? MdOutlineAccessTimeFilled
+                                  : product.status === "rejected"
+                                  ? MdCancel
+                                  : product.status === "in_review"
+                                  ? MdOutlineAccessTimeFilled
+                                  : MdOutlineAccessTimeFilled // Default color if none of the conditions match
+                              }
+                            >
+                              <p className=" capitalize">{product.status}</p>
+                            </Badge>
+                          </TableCell>
                           <TableCell></TableCell>
                           <TableCell>
                             <Button
@@ -433,7 +465,7 @@ export default function DashSellerSendStock() {
                                 setSelectedProduct(product);
                                 setSendItemId(product.id);
                               }}
-                              disabled={product.quantity === 0}
+                              disabled={product.quantity === 0 || product.status !== "approved"}
                               color="blue"
                             >
                               Send Stock
