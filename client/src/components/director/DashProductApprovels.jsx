@@ -167,6 +167,25 @@ export default function DashProductApprovels() {
     console.log(formData);
   };
 
+  const handleApprove = async (id) => {
+    try {
+      const res = await fetch(`/api/shop-item/approveitem/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        selectedTransfer.status = "approved";
+        fetchShopItems();
+        Toast.success("Product approved successfully!");
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <div className="p-3 w-full">
       <AnimatePresence>
@@ -430,7 +449,7 @@ export default function DashProductApprovels() {
                                   <Button
                                     color="green"
                                     onClick={() => {
-                                      setSelectedBillExport(selectedBill);
+                                      handleApprove(selectedTransfer.id);
                                     }}
                                   >
                                     <GoChecklist className="mr-3 h-4 w-4" />
