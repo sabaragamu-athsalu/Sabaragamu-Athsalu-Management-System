@@ -407,8 +407,9 @@ export default function DashProductApprovels() {
                               <TableCell>
                                 Rs. {product.item.itemPrice}
                               </TableCell>
+                              <TableCell>{product.fromshop.shopName}</TableCell>
                               <TableCell> {product.shop.shopName}</TableCell>
-                              <TableCell> {product.shop.shopName}</TableCell>
+
                               <TableCell>
                                 <div className="flex flex-wrap gap-2">
                                   <Badge
