@@ -23,6 +23,11 @@ module.exports = (sequelize, DataTypes) => {
         as: "fromshop",
       });
 
+      ShopItem.belongsTo(models.Product, {
+        foreignKey: "itemId",
+        as: "sendItem",
+      });
+
     }
   }
   ShopItem.init(

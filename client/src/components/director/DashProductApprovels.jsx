@@ -40,9 +40,16 @@ import {
   HiPaperAirplane,
   HiCheckCircle,
 } from "react-icons/hi";
+import { IoMdClose } from "react-icons/io";
+import { CiViewList } from "react-icons/ci";
+import { FiPrinter } from "react-icons/fi";
+import { PiExportBold } from "react-icons/pi";
+
 import { MdAdd, MdRemove } from "react-icons/md";
 import { MdOutlineAccessTimeFilled } from "react-icons/md";
 import { MdCancel } from "react-icons/md";
+import { FaFileCircleCheck } from "react-icons/fa6";
+import { GoChecklist } from "react-icons/go";
 
 export default function DashProductApprovels() {
   const { currentUser } = useSelector((state) => state.user);
@@ -66,7 +73,7 @@ export default function DashProductApprovels() {
   const [seller, setSeller] = useState([]);
   const [formData, setFormData] = useState({});
 
-  const [shopId, setShopId] = useState([]); // [1
+  const [shopId, setShopId] = useState([]);
 
   // Function to handle search query change
   const handleSearchChange = (e) => {
@@ -75,7 +82,7 @@ export default function DashProductApprovels() {
 
   // Filter products based on search query
   const filteredProducts = allProducts.filter((product) =>
-    product.item.itemName.toLowerCase().includes(searchQuery.toLowerCase())
+    product.sendItem.itemName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   useEffect(() => {
@@ -384,9 +391,9 @@ export default function DashProductApprovels() {
                       <Table hoverable className="mt-2 shadow-md w-full">
                         <TableHead>
                           <TableHeadCell>Product Name</TableHeadCell>
-                          <TableHeadCell>SKU</TableHeadCell>
                           <TableHeadCell>Manufacturer</TableHeadCell>
                           <TableHeadCell>Price</TableHeadCell>
+                          <TableHeadCell>Send Date</TableHeadCell>
                           <TableHeadCell>Send Shop</TableHeadCell>
                           <TableHeadCell>Received Shop</TableHeadCell>
                           <TableHeadCell>Quantity</TableHeadCell>
@@ -400,12 +407,22 @@ export default function DashProductApprovels() {
                           <Table.Body className="divide-y" key={product.id}>
                             <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
                               <TableCell>
-                                <b>{product.item.itemName}</b>
+                                <b>{product.sendItem.itemName}</b>
                               </TableCell>
-                              <TableCell>{product.item.sku}</TableCell>
-                              <TableCell>{product.item.manufacturer}</TableCell>
                               <TableCell>
-                                Rs. {product.item.itemPrice}
+                                {product.sendItem.manufacturer}
+                              </TableCell>
+                              <TableCell>
+                                Rs. {product.sendItem.itemPrice}
+                              </TableCell>
+                              <TableCell>
+                                {new Date(
+                                  product.updatedAt
+                                ).toLocaleDateString()}{" "}
+                                <br />
+                                {new Date(
+                                  product.updatedAt
+                                ).toLocaleTimeString()}
                               </TableCell>
                               <TableCell>{product.fromshop.shopName}</TableCell>
                               <TableCell> {product.shop.shopName}</TableCell>
@@ -413,23 +430,17 @@ export default function DashProductApprovels() {
                               <TableCell>
                                 <div className="flex flex-wrap gap-2">
                                   <Badge
-                                    className="pl-3 pr-3  w-28"
-                                    color={
-                                      product.quantity > 0 ? "green" : "red"
-                                    }
-                                    icon={
-                                      product.quantity > 0
-                                        ? HiCheckCircle
-                                        : HiXCircle
-                                    }
+                                    color="gray"
+                                    size="sm"
+                                    Label="In Stock"
                                   >
-                                    {product.quantity} in stock
+                                    {product.quantity} Qty
                                   </Badge>
                                 </div>
                               </TableCell>
                               <TableCell>
                                 <Badge
-                                  className="pl-3 pr-3 w-28"
+                                  className="pl-3 pr-3 w-20"
                                   color={
                                     product.status === "approved"
                                       ? "green"
@@ -460,21 +471,31 @@ export default function DashProductApprovels() {
                               </TableCell>
                               <TableCell></TableCell>
                               <TableCell>
-                                <Button
-                                  onClick={() => {
-                                    setOpenModal(true);
-                                    setSelectedProduct(product);
-                                    setSendItemId(product.id);
-                                  }}
-                                  disabled={
-                                    product.quantity === 0 ||
-                                    product.status !== "approved"
-                                  }
-                                  color="blue"
-                                >
-                                  Send Stock
-                                  <HiPaperAirplane className="ml-3 h-4 w-4 rotate-90" />
-                                </Button>
+                                {product.status === "approved" ? (
+                                  <Button
+                                    onClick={() => {
+                                      setSelectedBill(bill);
+                                      setIsModalOpen(true);
+                                    }}
+                                    className="w-28"
+                                    color="green"
+                                  >
+                                    <GoChecklist className="mr-3 h-4 w-4" />
+                                    View
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    onClick={() => {
+                                      setSelectedBill(bill);
+                                      setIsModalOpen(true);
+                                    }}
+                                    className="w-28"
+                                    color="yellow"
+                                  >
+                                    <GoChecklist className="mr-3 h-4 w-4" />
+                                    Approve
+                                  </Button>
+                                )}
                               </TableCell>
                             </TableRow>
                           </Table.Body>

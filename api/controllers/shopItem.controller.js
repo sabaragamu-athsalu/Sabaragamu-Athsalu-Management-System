@@ -178,7 +178,10 @@ function getShopsItems(req, res) {
 
 function getAllShopsItems(req, res) {
   models.ShopItem.findAll({
-    where: { fromType: "shoptoshop" },
+    where: {
+      fromType: "shoptoshop",
+      //status: "pending",
+    },
     include: [
       {
         model: models.Shop,
@@ -190,7 +193,7 @@ function getAllShopsItems(req, res) {
       },
       {
         model: models.Product,
-        as: "item",
+        as: "sendItem",
 
         include: [
           {
