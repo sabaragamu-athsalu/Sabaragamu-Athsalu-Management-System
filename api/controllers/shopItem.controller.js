@@ -311,7 +311,48 @@ function buyItems(req, res) {
     });
 }
 
-function shopItemApprove(req, res) {}
+function shopItemApprove(req, res) {
+  models.ShopItem.update(
+    { status: "approved" },
+    { where: { id: req.params.id } }
+  )
+    .then((data) => {
+      if (data == 1) {
+        models.ShopItem.findOne({
+          where: { id: req.params.id },
+          include: [
+            {
+              model: models.Shop,
+              as: "shop",
+            },
+            {
+              model: models.Product,
+              as: "item",
+            },
+          ],
+        })
+          .then((data) => {
+            res.status(200).json({
+              success: true,
+              message: "Shop item approved successfully",
+              shopItem: data,
+            });
+          })
+          .catch((err) => {
+            console.error("Error fetching shop item:", err);
+            res.status(500).json({ success: false, message: err });
+          });
+      } else {
+        res.status(404).json({
+          success: false,
+          message: "Shop item not found",
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({ success: false, message: "Some error occurred" });
+    });
+}
 
 module.exports = {
   getAllShopsItems: getAllShopsItems,
