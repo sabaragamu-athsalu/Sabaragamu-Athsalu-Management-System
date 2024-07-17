@@ -199,17 +199,30 @@ export default function DashSidebar() {
 
             {currentUser.role === "Director" && (
               <>
-                <Link to="/dashboard?tab=approvels">
-                  <Sidebar.Item
-                    className="mt-2 mb-2"
-                    icon={FaFileCircleCheck}
-                    active={tab === "approvels"}
-                    label="3"
-                    labelColor="red"
-                  >
-                    Approvels
-                  </Sidebar.Item>
-                </Link>
+                <Sidebar.Collapse icon={FaFileCircleCheck} label="Approvels">
+                  <Link to="/dashboard?tab=approvels">
+                    <Sidebar.Item
+                      className="mt-2 mb-2"
+                      icon={HiBuildingStorefront}
+                      active={tab === "approvels"}
+                      label="1"
+                      labelColor="red"
+                    >
+                      Store To Shop
+                    </Sidebar.Item>
+                  </Link>
+                  <Link to="/dashboard?tab=approvels">
+                    <Sidebar.Item
+                      className="mt-2 mb-2"
+                      icon={IoMdHome}
+                      active={tab === "approvels"}
+                      label="3"
+                      labelColor="red"
+                    >
+                      Shop To Shop
+                    </Sidebar.Item>
+                  </Link>
+                </Sidebar.Collapse>
                 <Link to="/dashboard?tab=products">
                   <Sidebar.Item
                     className="mt-2 mb-2"

@@ -175,7 +175,7 @@ export default function DashProductApprovels() {
             <div className="md:w-full mr-5">
               <div className="flex items-center justify-between">
                 <h1 className="mt-3 mb-3 text-left font-semibold text-xl">
-                  Approvels
+                  Approvels - Shop To Shop
                 </h1>
                 <div className="flex items-center">
                   <TextInput
