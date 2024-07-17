@@ -21,6 +21,9 @@ module.exports = {
       status: {
         type: Sequelize.STRING,
       },
+      lastreceivedquantity: {
+        type: Sequelize.INTEGER,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

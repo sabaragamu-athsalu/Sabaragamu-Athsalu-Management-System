@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       itemId: DataTypes.INTEGER,
       quantity: DataTypes.INTEGER,
       status: DataTypes.STRING,
+      lastreceivedquantity: DataTypes.INTEGER,
     },
     {
       sequelize,
