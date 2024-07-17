@@ -185,6 +185,10 @@ function getAllShopsItems(req, res) {
         as: "shop",
       },
       {
+        model: models.Shop,
+        as: "fromshop",
+      },
+      {
         model: models.Product,
         as: "item",
 

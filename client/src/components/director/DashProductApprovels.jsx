@@ -387,6 +387,8 @@ export default function DashProductApprovels() {
                           <TableHeadCell>SKU</TableHeadCell>
                           <TableHeadCell>Manufacturer</TableHeadCell>
                           <TableHeadCell>Price</TableHeadCell>
+                          <TableHeadCell>Send Shop</TableHeadCell>
+                          <TableHeadCell>Received Shop</TableHeadCell>
                           <TableHeadCell>Quantity</TableHeadCell>
                           <TableHeadCell>Status</TableHeadCell>
                           <TableHeadCell></TableHeadCell>
@@ -405,6 +407,8 @@ export default function DashProductApprovels() {
                               <TableCell>
                                 Rs. {product.item.itemPrice}
                               </TableCell>
+                              <TableCell> {product.shop.shopName}</TableCell>
+                              <TableCell> {product.shop.shopName}</TableCell>
                               <TableCell>
                                 <div className="flex flex-wrap gap-2">
                                   <Badge
