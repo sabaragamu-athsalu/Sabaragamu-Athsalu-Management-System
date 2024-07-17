@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       ShopItem.belongsTo(models.Shop, {
-        foreignKey: "id",
+        foreignKey: "fromId",
         as: "shop",
       });
       ShopItem.belongsTo(models.Product, {
@@ -26,6 +26,8 @@ module.exports = (sequelize, DataTypes) => {
       quantity: DataTypes.INTEGER,
       status: DataTypes.STRING,
       lastreceivedquantity: DataTypes.INTEGER,
+      fromId: DataTypes.INTEGER,
+      fromType: DataTypes.STRING,
     },
     {
       sequelize,
