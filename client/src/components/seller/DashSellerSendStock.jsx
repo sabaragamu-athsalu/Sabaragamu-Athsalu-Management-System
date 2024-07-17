@@ -118,7 +118,7 @@ export default function DashSellerSendStock() {
     console.log(sendItemId, formData.shopId, selectedProduct.id);
     try {
       const res = await fetch(
-        `/api/shop-item/senditem/${sendItemId}/${formData.shopId}/${selectedProduct.id}`,
+        `/api/shop-item/senditem/${sendItemId}/${formData.shopId}/${selectedProduct.id}/${shopId.id}`,
         {
           method: "PUT",
           headers: {
@@ -465,7 +465,10 @@ export default function DashSellerSendStock() {
                                 setSelectedProduct(product);
                                 setSendItemId(product.id);
                               }}
-                              disabled={product.quantity === 0 || product.status !== "approved"}
+                              disabled={
+                                product.quantity === 0 ||
+                                product.status !== "approved"
+                              }
                               color="blue"
                             >
                               Send Stock

@@ -11,7 +11,7 @@ router.get(
 );
 router.get("/getshopitem/:id", verifyToken, shopItemController.getShopsItemId);
 router.put(
-  "/senditem/:id/:shopId/:itemId",
+  "/senditem/:id/:shopId/:itemId/:fromId",
   verifyToken,
   shopItemController.sendShopItemoShop
 );

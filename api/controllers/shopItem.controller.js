@@ -1,6 +1,7 @@
 const e = require("express");
 const models = require("../models");
 const { parse } = require("dotenv");
+const { where } = require("sequelize");
 
 function sendShopItemoShop(req, res) {
   models.ShopItem.findOne({
@@ -44,6 +45,8 @@ function sendShopItemoShop(req, res) {
                     quantity: quantity,
                     status: "pending",
                     lastreceivedquantity: req.body.quantity,
+                    fromType: "shoptoshop",
+                    fromId: req.params.fromId,
                   },
                   {
                     where: {
@@ -70,6 +73,8 @@ function sendShopItemoShop(req, res) {
                   quantity: req.body.quantity,
                   status: "pending",
                   lastreceivedquantity: req.body.quantity,
+                  fromType: "shoptoshop",
+                  fromId: req.params.fromId,
                 })
                   .then((data) => {
                     res.status(200).json({
@@ -173,6 +178,7 @@ function getShopsItems(req, res) {
 
 function getAllShopsItems(req, res) {
   models.ShopItem.findAll({
+    where: { fromType: "shoptoshop" },
     include: [
       {
         model: models.Shop,
