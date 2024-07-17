@@ -40,7 +40,11 @@ function sendShopItemoShop(req, res) {
                 quantity =
                   parseInt(dataB.quantity) + parseInt(req.body.quantity);
                 models.ShopItem.update(
-                  { quantity: quantity },
+                  {
+                    quantity: quantity,
+                    status: "pending",
+                    lastreceivedquantity: req.body.quantity,
+                  },
                   {
                     where: {
                       shopId: req.params.shopId,
@@ -64,6 +68,8 @@ function sendShopItemoShop(req, res) {
                   shopId: req.params.shopId,
                   itemId: req.params.itemId,
                   quantity: req.body.quantity,
+                  status: "pending",
+                  lastreceivedquantity: req.body.quantity,
                 })
                   .then((data) => {
                     res.status(200).json({
@@ -134,6 +140,39 @@ function getShopsItemId(req, res) {
 function getShopsItems(req, res) {
   models.ShopItem.findAll({
     where: { shopId: req.params.sellerId },
+    include: [
+      {
+        model: models.Shop,
+        as: "shop",
+      },
+      {
+        model: models.Product,
+        as: "item",
+
+        include: [
+          {
+            model: models.Store,
+            as: "store",
+          },
+        ],
+      },
+    ],
+  })
+    .then((data) => {
+      res.status(200).json({
+        success: true,
+        message: "Shop items retrieved successfully",
+        shopItems: data,
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching shop items:", err);
+      res.status(500).json({ success: false, message: err });
+    });
+}
+
+function getAllShopsItems(req, res) {
+  models.ShopItem.findAll({
     include: [
       {
         model: models.Shop,
@@ -248,6 +287,7 @@ function buyItems(req, res) {
 }
 
 module.exports = {
+  getAllShopsItems: getAllShopsItems,
   getShopsItems: getShopsItems,
   getShopsItemId: getShopsItemId,
   sendShopItemoShop: sendShopItemoShop,
