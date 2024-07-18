@@ -156,7 +156,7 @@ function rejectShopItemoShop(req, res) {
         if (data == 1) {
           models.ShopItem.findOne({
             where: {
-              shopId: req.params.shopId,
+              shopId: req.params.fromId,
               itemId: req.params.itemId,
             },
             include: [
@@ -180,7 +180,7 @@ function rejectShopItemoShop(req, res) {
                   },
                   {
                     where: {
-                      shopId: req.params.shopId,
+                      shopId: req.params.fromId,
                       itemId: req.params.itemId,
                     },
                   }
@@ -198,7 +198,7 @@ function rejectShopItemoShop(req, res) {
                   });
               } else {
                 models.ShopItem.create({
-                  shopId: req.params.shopId,
+                  shopId: req.params.fromId,
                   itemId: req.params.itemId,
                   quantity: req.params.quantity,
                 })

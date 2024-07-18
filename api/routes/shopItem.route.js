@@ -23,7 +23,7 @@ router.get(
 );
 router.put("/approveitem/:id", verifyToken, shopItemController.shopItemApprove);
 router.put(
-  "/rejectitem/:id/:shopId/:itemId/:fromId/:quantity",
+  "/rejectitem/:shopId/:itemId/:fromId/:quantity",
   verifyToken,
   shopItemController.rejectShopItemoShop
 );

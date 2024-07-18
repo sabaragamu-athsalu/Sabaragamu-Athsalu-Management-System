@@ -187,11 +187,23 @@ export default function DashProductApprovels() {
     }
   };
 
-  const handelReject = async (id, fromId, itemId, shopId, quantity) => {
-    console.log(id, fromId, itemId, shopId, quantity);
+  const handelReject = async (fromId, itemId, shopId, quantity) => {
+    console.log(fromId, itemId, shopId, quantity);
+
+    console.log(
+      "shopId:" +
+        shopId +
+        " itemId:" +
+        itemId +
+        " fromId:" +
+        fromId +
+        " quantity:" +
+        quantity
+    );
+
     try {
       const res = await fetch(
-        `/api/shop-item/rejectitem/${id}/${fromId}/${itemId}/${shopId}/${quantity}`,
+        `/api/shop-item/rejectitem/${shopId}/${itemId}/${fromId}/${quantity}`,
         {
           method: "PUT",
           headers: {
@@ -573,7 +585,6 @@ export default function DashProductApprovels() {
                           color="failure"
                           onClick={() => {
                             handelReject(
-                              selectedTransfer.id,
                               selectedTransfer.fromId,
                               selectedTransfer.itemId,
                               selectedTransfer.shop.id,
