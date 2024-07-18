@@ -21,6 +21,9 @@ router.get(
   verifyToken,
   shopItemController.getAllShopsItems
 );
+
+router.get("/getallstoretoshopitem", verifyToken, shopItemController.getAllStoreToShopsItems);
+
 router.put("/approveitem/:id", verifyToken, shopItemController.shopItemApprove);
 router.put(
   "/rejectitem/:shopId/:itemId/:fromId/:quantity",
