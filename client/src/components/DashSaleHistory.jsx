@@ -284,11 +284,26 @@ export default function DashSellerInvetory() {
     doc.setDrawColor(0, 0, 0); // black color
     doc.line(5, 45, 55, 45); // horizontal line (x1, y1, x2, y2)
 
+    // Filter out rows with negative quantities
+    const filteredSales = selectBillPrint.filter((sale) => sale.quantity >= 0);
+    const hasNegativeQuantities = selectBillPrint.some(
+      (sale) => sale.quantity < 0
+    );
+
+    // Add message if there are any rows with negative quantities
+    if (hasNegativeQuantities) {
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "italic");
+      doc.setTextColor(255, 0, 0); // red color
+      doc.text("Some items have been returned.", 5, 50);
+      doc.setTextColor(0, 0, 0); // reset to black color
+    }
+
     // Add table with sales details
     const tableOptions = {
-      startY: 47, // Adjust startY to align the table properly with preceding content
+      startY: hasNegativeQuantities ? 55 : 47, // Adjust startY to align the table properly with preceding content
       head: [["Description", "Qty", "Unit", "Total"]],
-      body: selectBillPrint.map((sale) => [
+      body: filteredSales.map((sale) => [
         sale.Product.itemName,
         sale.quantity,
         `Rs.${sale.unitPrice.toFixed(2)}`,
@@ -315,7 +330,7 @@ export default function DashSellerInvetory() {
     doc.setFont("helvetica", "bold");
     doc.text("Total", 5, totalY);
     doc.text(
-      `Rs.${calculateTotalAmount(selectBillPrint).toFixed(2)}`,
+      `Rs.${calculateTotalAmount(filteredSales).toFixed(2)}`,
       55,
       totalY,
       { align: "right" }
@@ -362,6 +377,7 @@ export default function DashSellerInvetory() {
       );
     }
   };
+
 
   // Function to generate bill ID
   const generateBillId = (bill) => {
@@ -544,14 +560,6 @@ export default function DashSellerInvetory() {
                         {selectedBill ? generateBillId(selectedBill) : ""}
                       </div>
                     </div>
-                    {/* <button
-                      className="p-1 ml-auto bg-transparent border-0 text-gray-700 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                      onClick={() => setIsModalOpen(false)}
-                    >
-                      <span className="bg-transparent text-gray-700 h-6 w-6 text-2xl block outline-none focus:outline-none">
-                        X
-                      </span>
-                    </button> */}
                   </div>
 
                   <div className="relative p-6 flex-auto">
@@ -567,11 +575,6 @@ export default function DashSellerInvetory() {
                           ? selectedBill[0].Customer.phone
                           : ""}
                       </div>
-                      {/* <div className="text-gray-700 mb-2">
-                        {selectedBill && selectedBill[0].Customer
-                          ? `${selectedBill[0].Customer.city}, ${selectedBill[0].Customer.country} ${selectedBill[0].Customer.postalCode}`
-                          : ""}
-                      </div> */}
                       <div className="text-gray-700">
                         {selectedBill && selectedBill[0].Customer
                           ? selectedBill[0].Customer.email
@@ -580,6 +583,14 @@ export default function DashSellerInvetory() {
                     </div>
                     <hr className="mb-2" />
                     <br></br>
+
+                    {selectedBill &&
+                      selectedBill.some((sale) => sale.quantity < 0) && (
+                        <div className="text-red-500 mb-4">
+                          Some items have been returned.
+                        </div>
+                      )}
+
                     <table className="w-full mb-8">
                       <thead>
                         <tr>
@@ -599,22 +610,25 @@ export default function DashSellerInvetory() {
                       </thead>
                       <tbody>
                         {selectedBill &&
-                          selectedBill.map((sale) => (
-                            <tr key={sale.id}>
-                              <td className="text-left text-gray-700">
-                                {sale.Product.itemName}
-                              </td>
-                              <td className="text-right text-gray-700">
-                                {sale.quantity}
-                              </td>
-                              <td className="text-right text-gray-700">
-                                Rs.{sale.unitPrice.toFixed(2)}
-                              </td>
-                              <td className="text-right text-gray-700">
-                                Rs.{(sale.quantity * sale.unitPrice).toFixed(2)}
-                              </td>
-                            </tr>
-                          ))}
+                          selectedBill
+                            .filter((sale) => sale.quantity >= 0)
+                            .map((sale) => (
+                              <tr key={sale.id}>
+                                <td className="text-left text-gray-700">
+                                  {sale.Product.itemName}
+                                </td>
+                                <td className="text-right text-gray-700">
+                                  {sale.quantity}
+                                </td>
+                                <td className="text-right text-gray-700">
+                                  Rs.{sale.unitPrice.toFixed(2)}
+                                </td>
+                                <td className="text-right text-gray-700">
+                                  Rs.
+                                  {(sale.quantity * sale.unitPrice).toFixed(2)}
+                                </td>
+                              </tr>
+                            ))}
                       </tbody>
                       <tfoot>
                         <tr>
@@ -626,7 +640,11 @@ export default function DashSellerInvetory() {
                           <td className="text-right font-bold text-gray-700">
                             Rs.
                             {selectedBill
-                              ? calculateTotalAmount(selectedBill).toFixed(2)
+                              ? calculateTotalAmount(
+                                  selectedBill.filter(
+                                    (sale) => sale.quantity >= 0
+                                  )
+                                ).toFixed(2)
                               : ""}
                           </td>
                         </tr>
@@ -635,9 +653,6 @@ export default function DashSellerInvetory() {
                     <div className="text-gray-700 mb-2">
                       Thank you for your business!
                     </div>
-                    {/* <div className="text-gray-700 text-sm">
-                      Please remit payment within 30 days.
-                    </div> */}
                     <div className="flex items-center justify-between p-6 border-t border-solid rounded-tl-lg rounded-tr-lg rounded-b border-gray-300">
                       <Button.Group>
                         <Button
@@ -652,18 +667,14 @@ export default function DashSellerInvetory() {
                       <Button.Group>
                         <Button
                           color="gray"
-                          onClick={() => {
-                            setSelectedBillExport(selectedBill);
-                          }}
+                          onClick={() => setSelectedBillExport(selectedBill)}
                         >
                           <PiExportBold className="mr-3 h-4 w-4" />
                           Export
                         </Button>
                         <Button
                           color="gray"
-                          onClick={() => {
-                            setSelectBillPrint(selectedBill);
-                          }}
+                          onClick={() => setSelectBillPrint(selectedBill)}
                         >
                           <FiPrinter className="mr-3 h-4 w-4" />
                           Print
