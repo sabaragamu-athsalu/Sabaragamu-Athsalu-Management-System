@@ -4,27 +4,42 @@ const { parse } = require("dotenv");
 const { where } = require("sequelize");
 
 function sendShopItemoShop(req, res) {
-  models.ShopItem.findOne({
-    where: { id: req.params.id },
-  }).then((dataX) => {
-    quantity = parseInt(dataX.quantity) - parseInt(req.body.quantity);
+  const { shopId, itemId, fromId, fromShopId, quantity } = req.params;
+  console.log(
+    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  );
+  console.log(
+    `Parameters received -  shopId: ${shopId}, itemId: ${itemId}, fromId: ${fromId}, fromShopId: ${fromShopId}, quantity: ${quantity}`
+  );
+  console.log(
+    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  );
 
-    if (quantity < 0) {
-      res.status(404).json({
-        success: false,
-        message: "Not enough quantity",
-      });
-      return;
-    }
+  models.ShopItem.findOne({
+    where: {
+      shopId: req.params.shopId,
+      itemId: req.params.itemId,
+    },
+  }).then((dataX) => {
+    const quantity = parseInt(dataX.quantity) - parseInt(req.params.quantity);
+    console.log("quantity: ", quantity);
 
     models.ShopItem.update(
-      { quantity: dataX.quantity - req.body.quantity },
-      { where: { id: req.params.id } }
+      { quantity: parseInt(dataX.quantity) - parseInt(req.params.quantity) },
+      {
+        where: {
+          shopId: req.params.shopId,
+          itemId: req.params.itemId,
+        },
+      }
     )
       .then((data) => {
         if (data == 1) {
           models.ShopItem.findOne({
-            where: { shopId: req.params.shopId, itemId: req.params.itemId },
+            where: {
+              shopId: req.params.fromShopId,
+              itemId: req.params.itemId,
+            },
             include: [
               {
                 model: models.Shop,
@@ -38,19 +53,19 @@ function sendShopItemoShop(req, res) {
           })
             .then((dataB) => {
               if (dataB != null) {
-                quantity =
-                  parseInt(dataB.quantity) + parseInt(req.body.quantity);
+                const quantity =
+                  parseInt(dataB.quantity) + parseInt(req.params.quantity);
                 models.ShopItem.update(
                   {
                     quantity: quantity,
                     status: "pending",
-                    lastreceivedquantity: req.body.quantity,
+                    lastreceivedquantity: req.params.quantity,
                     fromType: "shoptoshop",
                     fromId: req.params.fromId,
                   },
                   {
                     where: {
-                      shopId: req.params.shopId,
+                      shopId: req.params.fromShopId,
                       itemId: req.params.itemId,
                     },
                   }
@@ -68,11 +83,11 @@ function sendShopItemoShop(req, res) {
                   });
               } else {
                 models.ShopItem.create({
-                  shopId: req.params.shopId,
+                  shopId: req.params.fromShopId,
                   itemId: req.params.itemId,
-                  quantity: req.body.quantity,
+                  quantity: req.params.quantity,
                   status: "pending",
-                  lastreceivedquantity: req.body.quantity,
+                  lastreceivedquantity: req.params.quantity,
                   fromType: "shoptoshop",
                   fromId: req.params.fromId,
                 })
@@ -110,9 +125,12 @@ function sendShopItemoShop(req, res) {
 
 function rejectShopItemoShop(req, res) {
   models.ShopItem.findOne({
-    where: { id: req.params.id },
+    where: {
+      shopId: req.params.shopId,
+      itemId: req.params.itemId,
+    },
   }).then((dataX) => {
-    quantity = parseInt(dataX.quantity) - parseInt(req.params.quantity);
+    const quantity = parseInt(dataX.quantity) - parseInt(req.params.quantity);
 
     if (quantity < 0) {
       res.status(404).json({
@@ -127,12 +145,20 @@ function rejectShopItemoShop(req, res) {
         quantity: dataX.quantity - req.params.quantity,
         status: "rejected",
       },
-      { where: { id: req.params.id } }
+      {
+        where: {
+          shopId: req.params.shopId,
+          itemId: req.params.itemId,
+        },
+      }
     )
       .then((data) => {
         if (data == 1) {
           models.ShopItem.findOne({
-            where: { shopId: req.params.shopId, itemId: req.params.itemId },
+            where: {
+              shopId: req.params.shopId,
+              itemId: req.params.itemId,
+            },
             include: [
               {
                 model: models.Shop,
@@ -146,7 +172,7 @@ function rejectShopItemoShop(req, res) {
           })
             .then((dataB) => {
               if (dataB != null) {
-                quantity =
+                const quantity =
                   parseInt(dataB.quantity) + parseInt(req.params.quantity);
                 models.ShopItem.update(
                   {
