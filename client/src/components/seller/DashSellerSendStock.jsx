@@ -41,6 +41,8 @@ import {
   HiCheckCircle,
 } from "react-icons/hi";
 import { MdAdd, MdRemove } from "react-icons/md";
+import { MdOutlineAccessTimeFilled } from "react-icons/md";
+import { MdCancel } from "react-icons/md";
 
 export default function DashSellerSendStock() {
   const { currentUser } = useSelector((state) => state.user);
@@ -63,6 +65,7 @@ export default function DashSellerSendStock() {
   const [createLoding, setCreateLoding] = useState(false);
   const [seller, setSeller] = useState([]);
   const [formData, setFormData] = useState({});
+  const [error, setError] = useState("");
 
   const [shopId, setShopId] = useState([]); // [1
 
@@ -73,7 +76,9 @@ export default function DashSellerSendStock() {
 
   // Filter products based on search query
   const filteredProducts = allProducts.filter((product) =>
-    product.item.itemName.toLowerCase().includes(searchQuery.toLowerCase())
+    product.itemDetails.itemName
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
   );
 
   useEffect(() => {
@@ -109,14 +114,22 @@ export default function DashSellerSendStock() {
     fetchData();
   }, [currentUser.id]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    handleChange(e);
+  const handleSubmit = async (formData, selectedProduct) => {
+    console.log(
+      "ShopId:" +
+        formData.shopId +
+        " ItemId: " +
+        selectedProduct.itemId +
+        " FromId:" +
+        selectedProduct.fromId +
+        " Quantity: " +
+        formData.quantity
+    );
+
     setCreateLoding(true);
-    console.log(sendItemId, formData.shopId, selectedProduct.id);
     try {
       const res = await fetch(
-        `/api/shop-item/senditem/${sendItemId}/${formData.shopId}/${selectedProduct.id}`,
+        `/api/shop-item/senditem/${selectedProduct.shopId}/${selectedProduct.itemId}/${selectedProduct.fromId}/${formData.shopId}/${formData.quantity}`,
         {
           method: "PUT",
           headers: {
@@ -129,41 +142,45 @@ export default function DashSellerSendStock() {
       if (res.ok) {
         setCreateLoding(false);
         setOpenModal(false);
-        setCreateUserError(null);
-
-        // Update local state with updated stock data
-        const updatedProducts = allProducts.map((product) => {
-          if (product.id === sendItemId) {
-            return {
-              ...product,
-              quantity: product.quantity - formData.quantity,
-            };
-          }
-          return product;
-        });
-        setAllProducts(updatedProducts);
-
-        Toast.success("Stock sent successfully!");
+        setFormData({});
+        setAllProducts(
+          allProducts.map((product) =>
+            product.id === selectedProduct.id
+              ? { ...product, quantity: product.quantity - formData.quantity }
+              : product
+          )
+        );
+        setShowAlert(true);
+        setTimeout(() => {
+          setShowAlert(false);
+        }, 3000);
       } else {
-        setCreateUserError(data.message);
         setCreateLoding(false);
+        setCreateUserError(data.message);
       }
     } catch (error) {
       console.log(error.message);
-      setCreateLoding(false);
     }
   };
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    let updatedQuantity = value;
+  const handelClear = () => {
+    setFormData({});
+    setOpenModal(false);
+  };
 
-    if (id === "quantity" && selectedProduct) {
-      const maxAvailableQuantity = selectedProduct.quantity;
-      updatedQuantity = Math.min(parseInt(value), maxAvailableQuantity);
+  const handleChange = (e) => {
+    const value = e.target.value;
+    if (value <= 0) {
+      setError("Quantity cannot be negative(-) or 0");
+    } else if (value > selectedProduct.quantity) {
+      setError(`Quantity should be less than ${selectedProduct.quantity}`);
+    } else {
+      setFormData({
+        ...formData,
+        quantity: value,
+      });
+      setError("");
     }
-    setFormData({ ...formData, [id]: updatedQuantity });
-    console.log(formData);
   };
 
   return (
@@ -210,13 +227,8 @@ export default function DashSellerSendStock() {
                   <Modal.Header>Send Item Stock</Modal.Header>
                   <Modal.Body>
                     <div className="space-y-6">
-                      <form
-                        onSubmit={handleSubmit}
-                        className="flex flex-col flex-grow gap-4"
-                      >
-                        {createUserError && (
-                          <Alert color="failure">{createUserError}</Alert>
-                        )}
+                      <form className="flex flex-col flex-grow gap-4">
+                        {error && <Alert color="failure">{error}</Alert>}
 
                         <div className="flex gap-5 mb-4">
                           <div className="w-full ">
@@ -233,14 +245,14 @@ export default function DashSellerSendStock() {
                                     <div className="mb-2 block">
                                       <h1 className="text-md text-gray-700">
                                         <b>Name : </b>{" "}
-                                        {selectedProduct.item.itemName}
+                                        {selectedProduct.itemDetails.itemName}
                                       </h1>
                                     </div>
 
                                     <div className="mb-2 block">
                                       <h1 className="text-md text-gray-700">
                                         <b>Price : </b> Rs.{" "}
-                                        {selectedProduct.item.itemPrice}
+                                        {selectedProduct.itemDetails.itemPrice}
                                       </h1>
                                     </div>
 
@@ -328,8 +340,8 @@ export default function DashSellerSendStock() {
                               required
                               shadow
                               onChange={handleChange}
-                              value={formData.quantity}
                               defaultValue={1}
+                              min="0"
                             />
                           </div>
                           <div className="w-1/2">
@@ -359,9 +371,11 @@ export default function DashSellerSendStock() {
 
                         <div className="flex gap-2 justify-end">
                           <Button
+                            onClick={() => {
+                              handleSubmit(formData, selectedProduct);
+                            }}
                             color="blue"
-                            type="submit"
-                            disabled={createLoding}
+                            disabled={createLoding || error}
                           >
                             {createLoding ? (
                               <>
@@ -376,7 +390,7 @@ export default function DashSellerSendStock() {
                           <Button
                             size="sm"
                             color="gray"
-                            onClick={() => setOpenModal(false)}
+                            onClick={() => handelClear()}
                           >
                             Decline
                           </Button>
@@ -396,6 +410,7 @@ export default function DashSellerSendStock() {
                       <TableHeadCell>Manufacturer</TableHeadCell>
                       <TableHeadCell>Price</TableHeadCell>
                       <TableHeadCell>Quantity</TableHeadCell>
+                      <TableHeadCell>Status</TableHeadCell>
                       <TableHeadCell></TableHeadCell>
                       <TableHeadCell>
                         <span className="sr-only">Edit</span>
@@ -405,11 +420,15 @@ export default function DashSellerSendStock() {
                       <Table.Body className="divide-y" key={product.id}>
                         <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
                           <TableCell>
-                            <b>{product.item.itemName}</b>
+                            <b>{product.itemDetails.itemName}</b>
                           </TableCell>
-                          <TableCell>{product.item.sku}</TableCell>
-                          <TableCell>{product.item.manufacturer}</TableCell>
-                          <TableCell>Rs. {product.item.itemPrice}</TableCell>
+                          <TableCell>{product.itemDetails.sku}</TableCell>
+                          <TableCell>
+                            {product.itemDetails.manufacturer}
+                          </TableCell>
+                          <TableCell>
+                            Rs. {product.itemDetails.itemPrice}
+                          </TableCell>
                           <TableCell>
                             <div className="flex flex-wrap gap-2">
                               <Badge
@@ -425,15 +444,46 @@ export default function DashSellerSendStock() {
                               </Badge>
                             </div>
                           </TableCell>
+                          <TableCell>
+                            <Badge
+                              className="pl-3 pr-3 w-28"
+                              color={
+                                product.status === "approved"
+                                  ? "green"
+                                  : product.status === "pending"
+                                  ? "yellow"
+                                  : product.status === "rejected"
+                                  ? "red"
+                                  : product.status === "in_review"
+                                  ? "blue"
+                                  : "grey" // Default color if none of the conditions match
+                              }
+                              icon={
+                                product.status === "approved"
+                                  ? HiCheckCircle
+                                  : product.status === "pending"
+                                  ? MdOutlineAccessTimeFilled
+                                  : product.status === "rejected"
+                                  ? MdCancel
+                                  : product.status === "in_review"
+                                  ? MdOutlineAccessTimeFilled
+                                  : MdOutlineAccessTimeFilled // Default color if none of the conditions match
+                              }
+                            >
+                              <p className=" capitalize">{product.status}</p>
+                            </Badge>
+                          </TableCell>
                           <TableCell></TableCell>
                           <TableCell>
                             <Button
                               onClick={() => {
                                 setOpenModal(true);
                                 setSelectedProduct(product);
-                                setSendItemId(product.id);
                               }}
-                              disabled={product.quantity === 0}
+                              disabled={
+                                product.quantity === 0 ||
+                                product.status !== "approved"
+                              }
                               color="blue"
                             >
                               Send Stock

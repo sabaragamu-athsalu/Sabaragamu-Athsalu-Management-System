@@ -12,7 +12,7 @@ import {
 import { Button, Table, Breadcrumb } from "flowbite-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import Chart from 'chart.js/auto';
+import Chart from "chart.js/auto";
 
 export default function SellerDashboardHome() {
   const [users, setUsers] = useState([]);
@@ -29,24 +29,26 @@ export default function SellerDashboardHome() {
   const [totalCreditSalesToday, setTotalCreditSalesToday] = useState(0);
   const [totalCreditSalesLastDay, setTotalCreditSalesLastDay] = useState(0);
   const [chart, setChart] = useState(null);
+  const [shopName, setShopName] = useState("");
 
   //calculate total sales amount
   const calculateTotalSalesAmount = () => {
-    return sales.filter(sale => sale.type === 'Cash').reduce((acc, sale) => acc + (sale.quantity * sale.unitPrice), 0)
+    return sales
+      .filter((sale) => sale.type === "Cash")
+      .reduce((acc, sale) => acc + sale.quantity * sale.unitPrice, 0);
   };
-  
+
   //calculate total sales amount today
   const calculateTotalSalesAmountToday = () => {
-    const today = new Date().toLocaleDateString('en-CA');
+    const today = new Date().toLocaleDateString("en-CA");
     return sales
       .filter((sale) => {
-        const saleDate = new Date(sale.buyDateTime).toLocaleDateString('en-CA');
-        return saleDate === today && sale.type === 'Cash';
+        const saleDate = new Date(sale.buyDateTime).toLocaleDateString("en-CA");
+        return saleDate === today && sale.type === "Cash";
       })
-      .reduce((acc, sale) => acc + (sale.quantity * sale.unitPrice), 0);
+      .reduce((acc, sale) => acc + sale.quantity * sale.unitPrice, 0);
   };
-  
-  
+
   //calculate total sales count
   const calculateTotalSalesCount = () => {
     return sales.length;
@@ -54,15 +56,17 @@ export default function SellerDashboardHome() {
 
   //calculate total income last month
   const calculateTotalIncomeLastMonth = () => {
-  const lastMonth = new Date();
-  lastMonth.setMonth(lastMonth.getMonth() - 1);
-  const lastMonthSales = sales.filter((sale) => {
-    const saleDate = new Date(sale.buyDateTime);
-    return saleDate >= lastMonth && sale.type === 'Cash';
-  });
-  return lastMonthSales.reduce((acc, sale) => acc + (sale.quantity * sale.unitPrice), 0);
-};
-
+    const lastMonth = new Date();
+    lastMonth.setMonth(lastMonth.getMonth() - 1);
+    const lastMonthSales = sales.filter((sale) => {
+      const saleDate = new Date(sale.buyDateTime);
+      return saleDate >= lastMonth && sale.type === "Cash";
+    });
+    return lastMonthSales.reduce(
+      (acc, sale) => acc + sale.quantity * sale.unitPrice,
+      0
+    );
+  };
 
   //calculate total income last day
   const calculateTotalIncomeLastDay = () => {
@@ -70,15 +74,20 @@ export default function SellerDashboardHome() {
     lastDay.setDate(lastDay.getDate() - 1);
     const lastDaySales = sales.filter((sale) => {
       const saleDate = new Date(sale.buyDateTime);
-      return saleDate >= lastDay && sale.type === 'Cash';
+      return saleDate >= lastDay && sale.type === "Cash";
     });
-    return lastDaySales.reduce((acc, sale) => acc + (sale.quantity * sale.unitPrice), 0);
+    return lastDaySales.reduce(
+      (acc, sale) => acc + sale.quantity * sale.unitPrice,
+      0
+    );
   };
 
   //calculate total credit sales
   const calculateTotalCreditSales = () => {
-    return sales.filter(sale => sale.type === 'Credit').reduce((acc, sale) => acc + (sale.quantity * sale.unitPrice), 0);
-  }
+    return sales
+      .filter((sale) => sale.type === "Credit")
+      .reduce((acc, sale) => acc + sale.quantity * sale.unitPrice, 0);
+  };
 
   //calculate total credit sales last month
   const calculateTotalCreditSalesLastMonth = () => {
@@ -86,21 +95,24 @@ export default function SellerDashboardHome() {
     lastMonth.setMonth(lastMonth.getMonth() - 1);
     const lastMonthSales = sales.filter((sale) => {
       const saleDate = new Date(sale.buyDateTime);
-      return saleDate >= lastMonth && sale.type === 'Credit';
+      return saleDate >= lastMonth && sale.type === "Credit";
     });
-    return lastMonthSales.reduce((acc, sale) => acc + (sale.quantity * sale.unitPrice), 0);
-  }
-  
+    return lastMonthSales.reduce(
+      (acc, sale) => acc + sale.quantity * sale.unitPrice,
+      0
+    );
+  };
+
   //calculate total credit sales today
   const calculateTotalCreditSalesToday = () => {
-    const today = new Date().toLocaleDateString('en-CA');
+    const today = new Date().toLocaleDateString("en-CA");
     return sales
       .filter((sale) => {
-        const saleDate = new Date(sale.buyDateTime).toLocaleDateString('en-CA');
-        return saleDate === today && sale.type === 'Credit';
+        const saleDate = new Date(sale.buyDateTime).toLocaleDateString("en-CA");
+        return saleDate === today && sale.type === "Credit";
       })
-      .reduce((acc, sale) => acc + (sale.quantity * sale.unitPrice), 0);
-  }
+      .reduce((acc, sale) => acc + sale.quantity * sale.unitPrice, 0);
+  };
 
   //calculate total credit sales last day
   const calculateTotalCreditSalesLastDay = () => {
@@ -108,17 +120,20 @@ export default function SellerDashboardHome() {
     lastDay.setDate(lastDay.getDate() - 1);
     const lastDaySales = sales.filter((sale) => {
       const saleDate = new Date(sale.buyDateTime);
-      return saleDate >= lastDay && sale.type === 'Credit';
+      return saleDate >= lastDay && sale.type === "Credit";
     });
-    return lastDaySales.reduce((acc, sale) => acc + (sale.quantity * sale.unitPrice), 0);
-  }
-  
+    return lastDaySales.reduce(
+      (acc, sale) => acc + sale.quantity * sale.unitPrice,
+      0
+    );
+  };
+
   //calculate total sales last day
   const calculateTotalSalesLastDay = () => {
     const lastDay = new Date();
     lastDay.setDate(lastDay.getDate() - 1);
     return sales.filter((sale) => new Date(sale.buyDateTime) >= lastDay).length;
-  }
+  };
 
   //update total sales amount, total sales count, total customers, total income last month
   useEffect(() => {
@@ -132,7 +147,7 @@ export default function SellerDashboardHome() {
     const totalCreditSalesLastMonth = calculateTotalCreditSalesLastMonth();
     const totalCreditSalesToday = calculateTotalCreditSalesToday();
     const totalCreditSalesLastDay = calculateTotalCreditSalesLastDay();
-    
+
     setTotalSaleAmount(Number(totalAmount.toFixed(2)));
     setTotalSaleAmountToday(Number(totalAmountToday.toFixed(2)));
     setTotalSalesCount(totalSalesCount);
@@ -146,40 +161,46 @@ export default function SellerDashboardHome() {
 
     // Initialize the chart if it's not already initialized
     if (!chart) {
-      const creditSales = sales.filter(sale => sale.type === 'Credit').reduce((acc, sale) => acc + (sale.quantity * sale.unitPrice), 0);
-      const cashSales = sales.filter(sale => sale.type === 'Cash').reduce((acc, sale) => acc + (sale.quantity * sale.unitPrice), 0);
+      const creditSales = sales
+        .filter((sale) => sale.type === "Credit")
+        .reduce((acc, sale) => acc + sale.quantity * sale.unitPrice, 0);
+      const cashSales = sales
+        .filter((sale) => sale.type === "Cash")
+        .reduce((acc, sale) => acc + sale.quantity * sale.unitPrice, 0);
 
-      const ctx = document.getElementById('pieChart').getContext('2d');
+      const ctx = document.getElementById("pieChart").getContext("2d");
       const newChart = new Chart(ctx, {
-        type: 'pie',
+        type: "pie",
         data: {
-          labels: ['Credit Sales', 'Cash Sales'],
-          datasets: [{
-            data: [creditSales, cashSales],
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.5)', // Red
-              'rgba(54, 162, 235, 0.5)'   // Blue
-            ],
-            borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(54, 162, 235, 1)'
-            ],
-            borderWidth: 1
-          }]
+          labels: ["Credit Sales", "Cash Sales"],
+          datasets: [
+            {
+              data: [creditSales, cashSales],
+              backgroundColor: [
+                "rgba(255, 99, 132, 0.5)", // Red
+                "rgba(54, 162, 235, 0.5)", // Blue
+              ],
+              borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
+              borderWidth: 1,
+            },
+          ],
         },
       });
-      
+
       setChart(newChart);
     } else {
       // Update the chart data if it's already initialized
-      const creditSales = sales.filter(sale => sale.type === 'Credit').reduce((acc, sale) => acc + (sale.quantity * sale.unitPrice), 0);
-      const cashSales = sales.filter(sale => sale.type === 'Cash').reduce((acc, sale) => acc + (sale.quantity * sale.unitPrice), 0);
+      const creditSales = sales
+        .filter((sale) => sale.type === "Credit")
+        .reduce((acc, sale) => acc + sale.quantity * sale.unitPrice, 0);
+      const cashSales = sales
+        .filter((sale) => sale.type === "Cash")
+        .reduce((acc, sale) => acc + sale.quantity * sale.unitPrice, 0);
 
       chart.data.datasets[0].data = [creditSales, cashSales];
       chart.update();
     }
-
-  },[sales, users]);
+  }, [sales, users]);
 
   //fetch sales to create monthly chart
   useEffect(() => {
@@ -189,23 +210,31 @@ export default function SellerDashboardHome() {
         const salesData = await salesRes.json();
         if (salesRes.ok) {
           const monthlyData = salesData.sales.reduce((acc, sale) => {
-            const month = new Date(sale.buyDateTime).toLocaleString('default', { month: 'short' });
+            const month = new Date(sale.buyDateTime).toLocaleString("default", {
+              month: "short",
+            });
             if (!acc[month]) {
               acc[month] = { creditSalesCount: 0, cashSalesCount: 0 };
             }
-            if (sale.type === 'Credit') {
-              acc[month].creditSalesCount += (sale.quantity * sale.unitPrice);
-            } else if (sale.type === 'Cash') {
-              acc[month].cashSalesCount += (sale.quantity * sale.unitPrice);
+            if (sale.type === "Credit") {
+              acc[month].creditSalesCount += sale.quantity * sale.unitPrice;
+            } else if (sale.type === "Cash") {
+              acc[month].cashSalesCount += sale.quantity * sale.unitPrice;
             }
             return acc;
           }, {});
-          
-          const months = Object.keys(monthlyData);
-          const creditSalesCounts = months.map(month => monthlyData[month].creditSalesCount);
-          const cashSalesCounts = months.map(month => monthlyData[month].cashSalesCount);
 
-          const monthlyChartCtx = document.getElementById("monthlyChart").getContext("2d");
+          const months = Object.keys(monthlyData);
+          const creditSalesCounts = months.map(
+            (month) => monthlyData[month].creditSalesCount
+          );
+          const cashSalesCounts = months.map(
+            (month) => monthlyData[month].cashSalesCount
+          );
+
+          const monthlyChartCtx = document
+            .getElementById("monthlyChart")
+            .getContext("2d");
           const monthlyChart = new Chart(monthlyChartCtx, {
             type: "bar",
             data: {
@@ -243,20 +272,17 @@ export default function SellerDashboardHome() {
 
     const fetchShopId = async () => {
       try {
-          const res = await fetch(`api/shop/getshop/${currentUser.id}`);
-          const data = await res.json();
-          if (res.ok) {
-            fetchSales(data.shops[0].id)
-          }
+        const res = await fetch(`api/shop/getshop/${currentUser.id}`);
+        const data = await res.json();
+        if (res.ok) {
+          fetchSales(data.shops[0].id);
+        }
       } catch (error) {
-          console.log(error.message);
+        console.log(error.message);
       }
-    }
+    };
     fetchShopId();
   }, []);
-
-
-
 
   //fetch sales, users and products
   useEffect(() => {
@@ -274,15 +300,17 @@ export default function SellerDashboardHome() {
 
     const fetchShopId = async () => {
       try {
-          const res = await fetch(`api/shop/getshop/${currentUser.id}`);
-          const data = await res.json();
-          if (res.ok) {
-            fetchSales(data.shops[0].id)
-          }
+        const res = await fetch(`api/shop/getshop/${currentUser.id}`);
+        const data = await res.json();
+        if (res.ok) {
+          fetchSales(data.shops[0].id);
+          setShopName(data.shops[0].shopName);
+          console.log(shopName);
+        }
       } catch (error) {
-          console.log(error.message);
+        console.log(error.message);
       }
-    }
+    };
     fetchShopId();
 
     const fetchUsers = async () => {
@@ -328,13 +356,18 @@ export default function SellerDashboardHome() {
             <Breadcrumb.Item>Products</Breadcrumb.Item>
           </Breadcrumb>
 
-          <h1 className="mt-3 mb-3 text-left font-semibold text-xl">Dashboard</h1>
+          <h1 className="mt-3 mb-3 text-left font-semibold text-xl">
+            Dashboard:<span className="text-red-500">{" "+shopName} </span>
+          </h1>
+         
 
           <div className="flex-wrap flex gap-4 justify-around">
             <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-56 w-full rounded-md shadow-md">
               <div className="flex justify-between">
                 <div className="">
-                  <h3 className="text-gray-500 text-md uppercase">Total Income </h3>
+                  <h3 className="text-gray-500 text-md uppercase">
+                    Total Income{" "}
+                  </h3>
                   <p className="text-2xl font-semibold">Rs {totalSaleAmount}</p>
                 </div>
                 <HiOutlineCurrencyDollar className="bg-blue-600  text-white rounded-full text-5xl p-3 shadow-lg" />
@@ -350,8 +383,12 @@ export default function SellerDashboardHome() {
             <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-56 w-full rounded-md shadow-md">
               <div className="flex justify-between">
                 <div className="">
-                  <h3 className="text-gray-500 text-md uppercase">Income today</h3>
-                  <p className="text-2xl font-semibold">Rs {totalSaleAmountToday}</p>
+                  <h3 className="text-gray-500 text-md uppercase">
+                    Income today
+                  </h3>
+                  <p className="text-2xl font-semibold">
+                    Rs {totalSaleAmountToday}
+                  </p>
                 </div>
                 <HiOutlineCurrencyDollar className="bg-red-600  text-white rounded-full text-5xl p-3 shadow-lg" />
               </div>
@@ -366,8 +403,12 @@ export default function SellerDashboardHome() {
             <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-56 w-full rounded-md shadow-md">
               <div className="flex justify-between">
                 <div className="">
-                  <h3 className="text-gray-500 text-md uppercase">Total Credit Sales</h3>
-                  <p className="text-2xl font-semibold">Rs {totalCreditSales}</p>
+                  <h3 className="text-gray-500 text-md uppercase">
+                    Total Credit Sales
+                  </h3>
+                  <p className="text-2xl font-semibold">
+                    Rs {totalCreditSales}
+                  </p>
                 </div>
                 <HiOutlineCurrencyDollar className="bg-pink-600  text-white rounded-full text-5xl p-3 shadow-lg" />
               </div>
@@ -382,8 +423,12 @@ export default function SellerDashboardHome() {
             <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-56 w-full rounded-md shadow-md">
               <div className="flex justify-between">
                 <div className="">
-                  <h3 className="text-gray-500 text-md uppercase">Credit Sales today</h3>
-                  <p className="text-2xl font-semibold">Rs {totalCreditSalesToday}</p>
+                  <h3 className="text-gray-500 text-md uppercase">
+                    Credit Sales today
+                  </h3>
+                  <p className="text-2xl font-semibold">
+                    Rs {totalCreditSalesToday}
+                  </p>
                 </div>
                 <HiOutlineCurrencyDollar className="bg-red-600  text-white rounded-full text-5xl p-3 shadow-lg" />
               </div>
@@ -407,11 +452,11 @@ export default function SellerDashboardHome() {
               </div>
               <div className="flex gap-4 text-sm">
                 <span className="text-green-500 font-semibold flex items-center ">
-                  <HiArrowNarrowUp />{totalSalesLastDay} Last Day
+                  <HiArrowNarrowUp />
+                  {totalSalesLastDay} Last Day
                 </span>
               </div>
             </div>
-
           </div>
           <div className="mt-5 flex flex-wrap gap-8 py-3 mx-auto justify-center">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
@@ -430,7 +475,7 @@ export default function SellerDashboardHome() {
                   <Button color="green">See all</Button>
                 </Link>
               </div>
-               <canvas id="monthlyChart" width="400" height="400"></canvas>
+              <canvas id="monthlyChart" width="400" height="400"></canvas>
             </div>
           </div>
         </motion.div>

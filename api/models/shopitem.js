@@ -10,13 +10,31 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       ShopItem.belongsTo(models.Shop, {
-        foreignKey: "id",
+        foreignKey: "shopId",
         as: "shop",
       });
       ShopItem.belongsTo(models.Product, {
         foreignKey: "id",
         as: "item",
       });
+
+      ShopItem.belongsTo(models.Shop, {
+        foreignKey: "fromId",
+        as: "fromshop",
+      });
+
+      ShopItem.belongsTo(models.Product, {
+        foreignKey: "itemId",
+        as: "sendItem",
+      });
+
+      ShopItem.belongsTo(models.Product, {
+        foreignKey: "itemId",
+        as: "itemDetails",
+      });
+
+      
+
     }
   }
   ShopItem.init(
@@ -24,6 +42,10 @@ module.exports = (sequelize, DataTypes) => {
       shopId: DataTypes.INTEGER,
       itemId: DataTypes.INTEGER,
       quantity: DataTypes.INTEGER,
+      status: DataTypes.STRING,
+      lastreceivedquantity: DataTypes.INTEGER,
+      fromId: DataTypes.INTEGER,
+      fromType: DataTypes.STRING,
     },
     {
       sequelize,

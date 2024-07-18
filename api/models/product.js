@@ -18,6 +18,8 @@ module.exports = (sequelize, DataTypes) => {
         as: 'store',
         foreignKey: 'itemId',
       });
+
+      
     }
   }
   Product.init({
