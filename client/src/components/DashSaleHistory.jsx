@@ -43,7 +43,7 @@ export default function DashSellerInvetory() {
 
   // Pagiation
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const totalPages = Math.ceil(filteredSales.length / itemsPerPage);
 
   const onPageChange = (page) => setCurrentPage(page);

@@ -491,10 +491,10 @@ export default function DashSidebar() {
                     </div>
                     <div className="ml-3 text-sm font-normal">
                       <span className="mb-1 text-sm font-semibold text-gray-900 dark:text-white">
-                        Approvel available - Shop to Shop
+                        Approvel available
                       </span>
                       <div className="mb-2 text-sm font-normal">
-                        A new software version is available for download.
+                        Pleces check the approvels for <b>shop to shop</b>
                       </div>
                       <div className="flex gap-2">
                         <div className="w-auto">
@@ -529,10 +529,10 @@ export default function DashSidebar() {
                     </div>
                     <div className="ml-3 text-sm font-normal">
                       <span className="mb-1 text-sm font-semibold text-gray-900 dark:text-white">
-                        Approvel available - Store to Shop
+                        Approvel available
                       </span>
                       <div className="mb-2 text-sm font-normal">
-                        A new software version is available for download.
+                        Pleces check the approvels for <b>store to shop</b>
                       </div>
                       <div className="flex gap-2">
                         <div className="w-auto">
