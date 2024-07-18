@@ -61,7 +61,7 @@ function sendShopItemoShop(req, res) {
                     status: "pending",
                     lastreceivedquantity: req.params.quantity,
                     fromType: "shoptoshop",
-                    fromId: req.params.fromId,
+                    fromId: req.params.shopId,
                   },
                   {
                     where: {
@@ -89,7 +89,7 @@ function sendShopItemoShop(req, res) {
                   status: "pending",
                   lastreceivedquantity: req.params.quantity,
                   fromType: "shoptoshop",
-                  fromId: req.params.fromId,
+                  fromId: req.params.shopId,
                 })
                   .then((data) => {
                     res.status(200).json({
