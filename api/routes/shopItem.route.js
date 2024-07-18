@@ -31,5 +31,6 @@ router.put(
   shopItemController.rejectShopItemoShop
 );
 router.get("/pending-count", verifyToken, shopItemController.pendingShopItemCount);
+router.get("/pending-count-shop", verifyToken, shopItemController.pendingStoreItemCount);
 
 module.exports = router;

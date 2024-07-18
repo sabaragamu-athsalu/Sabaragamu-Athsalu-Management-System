@@ -203,7 +203,7 @@ export default function DashStoreProductApprovels() {
 
     try {
       const res = await fetch(
-        `/api/shop-item/rejectitem/${shopId}/${itemId}/${fromId}/${quantity}`,
+        `/api/store-item/rejectitem/${shopId}/${itemId}/${fromId}/${quantity}`,
         {
           method: "PUT",
           headers: {
