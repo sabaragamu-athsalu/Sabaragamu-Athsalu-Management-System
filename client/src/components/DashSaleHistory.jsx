@@ -191,11 +191,28 @@ export default function DashSellerInvetory() {
     doc.setDrawColor(0, 0, 0); // black color
     doc.line(10, 75, 200, 75); // horizontal line (x1, y1, x2, y2)
 
+    // Filter out rows with negative quantities
+    const filteredSales = selectedBillExport.filter(
+      (sale) => sale.quantity >= 0
+    );
+    const hasNegativeQuantities = selectedBillExport.some(
+      (sale) => sale.quantity < 0
+    );
+
+    // Add message if there are any rows with negative quantities
+    if (hasNegativeQuantities) {
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "italic");
+      doc.setTextColor(255, 0, 0); // red color
+      doc.text("Some items have been returned.", 10, 80);
+      doc.setTextColor(0, 0, 0); // reset to black color
+    }
+
     // Add table with sales details
     doc.autoTable({
-      startY: 80,
+      startY: hasNegativeQuantities ? 90 : 80, // Adjust startY to align the table properly with preceding content
       head: [["Description", "Quantity", "Unit Price", "Total Price"]],
-      body: selectedBillExport.map((sale) => [
+      body: filteredSales.map((sale) => [
         sale.Product.itemName,
         sale.quantity,
         `Rs.${sale.unitPrice.toFixed(2)}`,
@@ -218,10 +235,12 @@ export default function DashSellerInvetory() {
     doc.setFont("helvetica", "bold");
     doc.text("Total", 10, totalY);
     doc.text(
-      `Rs.${calculateTotalAmount(selectedBillExport).toFixed(2)}`,
+      `Rs.${calculateTotalAmount(filteredSales).toFixed(2)}`,
       200,
       totalY,
-      { align: "right" }
+      {
+        align: "right",
+      }
     );
     doc.setFont("helvetica", "normal");
 
@@ -240,6 +259,7 @@ export default function DashSellerInvetory() {
     // Save the PDF with a meaningful file name
     doc.save(`${generateBillId(selectedBillExport)}.pdf`);
   };
+
 
   const printBill = () => {
     // Define a custom page size for a 58mm wide paper
