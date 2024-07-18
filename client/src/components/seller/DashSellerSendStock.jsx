@@ -65,6 +65,7 @@ export default function DashSellerSendStock() {
   const [createLoding, setCreateLoding] = useState(false);
   const [seller, setSeller] = useState([]);
   const [formData, setFormData] = useState({});
+  const [error, setError] = useState("");
 
   const [shopId, setShopId] = useState([]); // [1
 
@@ -113,14 +114,22 @@ export default function DashSellerSendStock() {
     fetchData();
   }, [currentUser.id]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    handleChange(e);
+  const handleSubmit = async (formData, selectedProduct) => {
+    console.log(
+      "ShopId:" +
+        formData.shopId +
+        " ItemId: " +
+        selectedProduct.itemId +
+        " FromId:" +
+        selectedProduct.fromId +
+        " Quantity: " +
+        formData.quantity
+    );
+
     setCreateLoding(true);
-    console.log(sendItemId, formData.shopId, selectedProduct.id);
     try {
       const res = await fetch(
-        `/api/shop-item/senditem/${sendItemId}/${formData.shopId}/${selectedProduct.id}/${shopId.id}`,
+        `/api/shop-item/senditem/${selectedProduct.shopId}/${selectedProduct.itemId}/${selectedProduct.fromId}/${formData.shopId}/${formData.quantity}`,
         {
           method: "PUT",
           headers: {
@@ -133,41 +142,45 @@ export default function DashSellerSendStock() {
       if (res.ok) {
         setCreateLoding(false);
         setOpenModal(false);
-        setCreateUserError(null);
-
-        // Update local state with updated stock data
-        const updatedProducts = allProducts.map((product) => {
-          if (product.id === sendItemId) {
-            return {
-              ...product,
-              quantity: product.quantity - formData.quantity,
-            };
-          }
-          return product;
-        });
-        setAllProducts(updatedProducts);
-
-        Toast.success("Stock sent successfully!");
+        setFormData({});
+        setAllProducts(
+          allProducts.map((product) =>
+            product.id === selectedProduct.id
+              ? { ...product, quantity: product.quantity - formData.quantity }
+              : product
+          )
+        );
+        setShowAlert(true);
+        setTimeout(() => {
+          setShowAlert(false);
+        }, 3000);
       } else {
-        setCreateUserError(data.message);
         setCreateLoding(false);
+        setCreateUserError(data.message);
       }
     } catch (error) {
       console.log(error.message);
-      setCreateLoding(false);
     }
   };
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    let updatedQuantity = value;
+  const handelClear = () => {
+    setFormData({});
+    setOpenModal(false);
+  };
 
-    if (id === "quantity" && selectedProduct) {
-      const maxAvailableQuantity = selectedProduct.quantity;
-      updatedQuantity = Math.min(parseInt(value), maxAvailableQuantity);
+  const handleChange = (e) => {
+    const value = e.target.value;
+    if (value <= 0) {
+      setError("Quantity cannot be negative(-) or 0");
+    } else if (value > selectedProduct.quantity) {
+      setError(`Quantity should be less than ${selectedProduct.quantity}`);
+    } else {
+      setFormData({
+        ...formData,
+        quantity: value,
+      });
+      setError("");
     }
-    setFormData({ ...formData, [id]: updatedQuantity });
-    console.log(formData);
   };
 
   return (
@@ -214,13 +227,8 @@ export default function DashSellerSendStock() {
                   <Modal.Header>Send Item Stock</Modal.Header>
                   <Modal.Body>
                     <div className="space-y-6">
-                      <form
-                        onSubmit={handleSubmit}
-                        className="flex flex-col flex-grow gap-4"
-                      >
-                        {createUserError && (
-                          <Alert color="failure">{createUserError}</Alert>
-                        )}
+                      <form className="flex flex-col flex-grow gap-4">
+                        {error && <Alert color="failure">{error}</Alert>}
 
                         <div className="flex gap-5 mb-4">
                           <div className="w-full ">
@@ -332,8 +340,8 @@ export default function DashSellerSendStock() {
                               required
                               shadow
                               onChange={handleChange}
-                              value={formData.quantity}
                               defaultValue={1}
+                              min="0"
                             />
                           </div>
                           <div className="w-1/2">
@@ -363,9 +371,11 @@ export default function DashSellerSendStock() {
 
                         <div className="flex gap-2 justify-end">
                           <Button
+                            onClick={() => {
+                              handleSubmit(formData, selectedProduct);
+                            }}
                             color="blue"
-                            type="submit"
-                            disabled={createLoding}
+                            disabled={createLoding || error}
                           >
                             {createLoding ? (
                               <>
@@ -380,7 +390,7 @@ export default function DashSellerSendStock() {
                           <Button
                             size="sm"
                             color="gray"
-                            onClick={() => setOpenModal(false)}
+                            onClick={() => handelClear()}
                           >
                             Decline
                           </Button>
@@ -469,7 +479,6 @@ export default function DashSellerSendStock() {
                               onClick={() => {
                                 setOpenModal(true);
                                 setSelectedProduct(product);
-                                setSendItemId(product.id);
                               }}
                               disabled={
                                 product.quantity === 0 ||
