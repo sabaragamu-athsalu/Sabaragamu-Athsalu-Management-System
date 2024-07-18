@@ -99,7 +99,7 @@ export default function DashStoreProductApprovels() {
   const fetchShopItems = async () => {
     try {
       setCreateLoding(true);
-      const res = await fetch(`/api/shop-item/getallshopitems`);
+      const res = await fetch(`/api/shop-item/getallstoretoshopitem`);
       const data = await res.json();
       if (res.ok) {
         setAllProducts(data.shopItems);
@@ -343,35 +343,25 @@ export default function DashStoreProductApprovels() {
                         <div className="flex">
                           <div className="mb-8">
                             <h2 className="text-lg font-bold mb-4">
-                              Send Shop:
+                              Send Store:
                             </h2>
                             <div className="text-gray-700 mb-2">
-                              <b>Shop Name:</b>{" "}
+                              <b>Store Name:</b>{" "}
                               {selectedTransfer
-                                ? selectedTransfer.fromshop.shopName
+                                ? selectedTransfer.sendItem.store[0]?.storeName
                                 : ""}
                             </div>
-                            <div className="text-gray-700 mb-2">
-                              <b>Seller Name:</b>{" "}
-                              {selectedTransfer ? (
-                                <>
-                                  {selectedTransfer.fromshop.seller.firstname}{" "}
-                                  {selectedTransfer.fromshop.seller.lastname}{" "}
-                                </>
-                              ) : (
-                                ""
-                              )}
-                            </div>
+
                             <div className="text-gray-700 mb-2">
                               <b>Phone:</b>{" "}
                               {selectedTransfer
-                                ? selectedTransfer.fromshop.phone
+                                ? selectedTransfer.sendItem.store[0]?.phone
                                 : ""}
                             </div>
                             <div className="text-gray-700">
                               <b>Address:</b>{" "}
                               {selectedTransfer
-                                ? selectedTransfer.fromshop.address
+                                ? selectedTransfer.sendItem.store[0]?.address
                                 : ""}
                             </div>
                           </div>
@@ -620,7 +610,7 @@ export default function DashStoreProductApprovels() {
                           <TableHeadCell>Manufacturer</TableHeadCell>
                           <TableHeadCell>Price</TableHeadCell>
                           <TableHeadCell>Send Date</TableHeadCell>
-                          <TableHeadCell>Send Shop</TableHeadCell>
+                          <TableHeadCell>Send Store</TableHeadCell>
                           <TableHeadCell>Received Shop</TableHeadCell>
                           <TableHeadCell>Quantity</TableHeadCell>
                           <TableHeadCell>Status</TableHeadCell>
@@ -650,7 +640,9 @@ export default function DashStoreProductApprovels() {
                                   product.updatedAt
                                 ).toLocaleTimeString()}
                               </TableCell>
-                              <TableCell>{product.fromshop.shopName}</TableCell>
+                              <TableCell>
+                                {product.sendItem.store[0]?.storeName}
+                              </TableCell>
                               <TableCell> {product.shop.shopName}</TableCell>
 
                               <TableCell>
