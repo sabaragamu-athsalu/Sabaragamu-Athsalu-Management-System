@@ -20,10 +20,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { signoutSuccess } from "../redux/user/userSlice";
 import { BsFillHouseAddFill } from "react-icons/bs";
+import { FaFileCircleCheck } from "react-icons/fa6";
 
 export default function DashSidebar() {
   const { currentUser } = useSelector((state) => state.user);
   const loaction = useLocation();
+  const [count, setCount] = useState(0);
 
   const dispatch = useDispatch();
 
@@ -34,6 +36,7 @@ export default function DashSidebar() {
     if (tabFromUrl) {
       setTab(tabFromUrl);
     }
+    fetchShopItemPendingCount();
   }, [loaction.search]);
 
   const handleSignout = async () => {
@@ -51,6 +54,31 @@ export default function DashSidebar() {
       console.log(error.message);
     }
   };
+
+  const fetchShopItemPendingCount = async () => {
+    try {
+      const res = await fetch("/api/shop-item/pending-count", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        setCount(data.shopItemsCount);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser.role === "Director") {
+      fetchShopItemPendingCount();
+    }
+  }, [currentUser.role]);
 
   return (
     <Sidebar
@@ -198,6 +226,30 @@ export default function DashSidebar() {
 
             {currentUser.role === "Director" && (
               <>
+                <Sidebar.Collapse icon={FaFileCircleCheck} label="Approvels">
+                  <Link to="/dashboard?tab=approvels-store">
+                    <Sidebar.Item
+                      className="mt-2 mb-2"
+                      icon={HiBuildingStorefront}
+                      active={tab === "approvels-store"}
+                      label="1"
+                      labelColor="red"
+                    >
+                      Store To Shop
+                    </Sidebar.Item>
+                  </Link>
+                  <Link to="/dashboard?tab=approvels">
+                    <Sidebar.Item
+                      className="mt-2 mb-2"
+                      icon={IoMdHome}
+                      active={tab === "approvels"}
+                      label={count > 0 ? count : ""}
+                      labelColor="red"
+                    >
+                      Shop To Shop
+                    </Sidebar.Item>
+                  </Link>
+                </Sidebar.Collapse>
                 <Link to="/dashboard?tab=products">
                   <Sidebar.Item
                     className="mt-2 mb-2"

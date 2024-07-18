@@ -99,7 +99,9 @@ export default function DashPOS() {
 
   // Filter products based on search query
   const filteredProducts = allProducts.filter((product) =>
-    product.item.itemName.toLowerCase().includes(searchQuery.toLowerCase())
+    product.itemDetails.itemName
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
   );
 
   useEffect(() => {
@@ -196,7 +198,7 @@ export default function DashPOS() {
   const calculateTotalPrice = () => {
     let totalPrice = 0;
     selectedProducts.forEach((product) => {
-      totalPrice += product.item.itemPrice * product.quantity;
+      totalPrice += product.itemDetails.itemPrice * product.quantity;
     });
 
     // Calculate discount amount
@@ -217,7 +219,7 @@ export default function DashPOS() {
   const calculateSubtotal = () => {
     let subtotal = 0;
     selectedProducts.forEach((product) => {
-      subtotal += product.item.itemPrice * product.quantity;
+      subtotal += product.itemDetails.itemPrice * product.quantity;
     });
     return subtotal;
   };
@@ -264,7 +266,7 @@ export default function DashPOS() {
       orderDetails.shopId = product.shopId;
       console.log(product.shopId);
       orderDetails.buyDateTime = new Date().toLocaleString();
-      orderDetails.unitPrice = product.item.itemPrice;
+      orderDetails.unitPrice = product.itemDetails.itemPrice;
       orderDetails.quantity = product.quantity;
 
       try {
@@ -395,10 +397,10 @@ export default function DashPOS() {
       startY: 47, // Adjust startY to align the table properly with preceding content
       head: [["Description", "Qty", "Unit", "Total"]],
       body: selectedProducts.map((product) => [
-        product.item.itemName,
+        product.itemDetails.itemName,
         product.quantity,
-        `Rs.${product.item.itemPrice}`,
-        `Rs${product.quantity * product.item.itemPrice}`,
+        `Rs.${product.itemDetails.itemPrice}`,
+        `Rs${product.quantity * product.itemDetails.itemPrice}`,
       ]),
       theme: "striped",
       headStyles: { fillColor: [60, 141, 188] },
@@ -556,63 +558,73 @@ export default function DashPOS() {
                     {filteredProducts.map((product) => (
                       <Table.Body className="divide-y" key={product.id}>
                         {product.quantity > 0 && (
-                          <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                            <TableCell>
-                              <b>{product.item.itemName}</b>
-                            </TableCell>
-                            <TableCell>{product.item.sku}</TableCell>
-                            <TableCell>{product.item.manufacturer}</TableCell>
-                            <TableCell>Rs. {product.item.itemPrice}</TableCell>
-                            <TableCell>
-                              <Badge
-                                className="pl-3 pr-3"
-                                color={product.quantity > 0 ? "green" : "red"}
-                                icon={
-                                  product.quantity > 0
-                                    ? HiCheckCircle
-                                    : HiXCircle
-                                }
-                              >
-                                {product.quantity} in stock
-                              </Badge>
-                            </TableCell>
-                            <TableCell></TableCell>
-                            <TableCell>
-                              {product.quantity > 0 ? (
-                                <Button
-                                  //disabled={selectedCustomer <= 0}
-                                  onClick={() =>
-                                    handleAddToSelected(product.id)
-                                  }
-                                  color={
-                                    selectedProducts.some(
-                                      (p) => p.id === product.id
-                                    )
-                                      ? "green"
-                                      : "gray"
-                                  }
-                                >
-                                  {selectedProducts.some(
-                                    (p) => p.id === product.id
-                                  ) ? (
-                                    <>
-                                      Added
-                                      <HiOutlineCheckCircle className="ml-3 h-4 w-4" />
-                                    </>
+                          <>
+                            {product.status === "approved" && (
+                              <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                                <TableCell>
+                                  <b>{product.itemDetails.itemName}</b>
+                                </TableCell>
+                                <TableCell>{product.itemDetails.sku}</TableCell>
+                                <TableCell>
+                                  {product.itemDetails.manufacturer}
+                                </TableCell>
+                                <TableCell>
+                                  Rs. {product.itemDetails.itemPrice}
+                                </TableCell>
+                                <TableCell>
+                                  <Badge
+                                    className="pl-3 pr-3"
+                                    color={
+                                      product.quantity > 0 ? "green" : "red"
+                                    }
+                                    icon={
+                                      product.quantity > 0
+                                        ? HiCheckCircle
+                                        : HiXCircle
+                                    }
+                                  >
+                                    {product.quantity} in stock
+                                  </Badge>
+                                </TableCell>
+                                <TableCell></TableCell>
+                                <TableCell>
+                                  {product.quantity > 0 ? (
+                                    <Button
+                                      //disabled={selectedCustomer <= 0}
+                                      onClick={() =>
+                                        handleAddToSelected(product.id)
+                                      }
+                                      color={
+                                        selectedProducts.some(
+                                          (p) => p.id === product.id
+                                        )
+                                          ? "green"
+                                          : "gray"
+                                      }
+                                    >
+                                      {selectedProducts.some(
+                                        (p) => p.id === product.id
+                                      ) ? (
+                                        <>
+                                          Added
+                                          <HiOutlineCheckCircle className="ml-3 h-4 w-4" />
+                                        </>
+                                      ) : (
+                                        <>
+                                          Add
+                                          <HiOutlineArrowCircleRight className="ml-3 h-4 w-4" />
+                                        </>
+                                      )}
+                                    </Button>
                                   ) : (
-                                    <>
-                                      Add
-                                      <HiOutlineArrowCircleRight className="ml-3 h-4 w-4" />
-                                    </>
+                                    <Button color="gray" disabled>
+                                      Out of stock
+                                    </Button>
                                   )}
-                                </Button>
-                              ) : (
-                                <Button color="gray" disabled>
-                                  Out of stock
-                                </Button>
-                              )}
-                            </TableCell>
-                          </TableRow>
+                                </TableCell>
+                              </TableRow>
+                            )}
+                          </>
                         )}
                       </Table.Body>
                     ))}
@@ -666,7 +678,7 @@ export default function DashPOS() {
                               <Table.Body className="divide-y" key={product.id}>
                                 <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                   <TableCell>
-                                    <b>{product.item.itemName}</b>
+                                    <b>{product.itemDetails.itemName}</b>
                                   </TableCell>
                                   <TableCell>
                                     <div
@@ -694,7 +706,8 @@ export default function DashPOS() {
                                   </TableCell>
                                   <TableCell>
                                     Rs.
-                                    {product.item.itemPrice * product.quantity}
+                                    {product.itemDetails.itemPrice *
+                                      product.quantity}
                                   </TableCell>
                                   <TableCell>
                                     <Button
@@ -1147,14 +1160,14 @@ export default function DashPOS() {
                                   >
                                     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                       <TableCell>
-                                        <b>{product.item.itemName}</b>
+                                        <b>{product.itemDetails.itemName}</b>
                                       </TableCell>
                                       <TableCell>
                                         <span>{product.quantity}</span>
                                       </TableCell>
                                       <TableCell>
                                         Rs.
-                                        {product.item.itemPrice *
+                                        {product.itemDetails.itemPrice *
                                           product.quantity}
                                       </TableCell>
                                     </TableRow>

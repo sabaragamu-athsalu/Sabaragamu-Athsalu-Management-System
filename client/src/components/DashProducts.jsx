@@ -45,7 +45,7 @@ export default function DashProducts() {
   // Pagiation
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  
+
   const totalPages = Math.ceil(products.length / itemsPerPage);
 
   const onPageChange = (page) => setCurrentPage(page);
@@ -59,10 +59,12 @@ export default function DashProducts() {
 
   const fetchProducts = async () => {
     try {
+      setCreateLoding(true);
       const res = await fetch(`/api/product/getallproducts`);
       const data = await res.json();
       if (res.ok) {
         setProducts(data.products);
+        setCreateLoding(false);
         // if (data.product.length < 9) {
         //   setShowMore(false);
         // }
@@ -197,8 +199,8 @@ export default function DashProducts() {
               style={{
                 display:
                   currentUser.role === "Accountant" ||
-                    currentUser.role === "Director" ||
-                    currentUser.role === "StoreKeeper"
+                  currentUser.role === "Director" ||
+                  currentUser.role === "StoreKeeper"
                     ? "none"
                     : "inline-block",
               }}
@@ -443,89 +445,98 @@ export default function DashProducts() {
             </motion.div>
           </Modal>
 
-          {products.length > 0 ? (
+          {createLoding ? (
+            <div className="flex justify-center items-center h-96">
+              <Spinner size="xl" />
+            </div>
+          ) : (
             <>
-              <Table hoverable className="shadow-md w-full">
-                <TableHead>
-                  <TableHeadCell>Product Name</TableHeadCell>
-                  <TableHeadCell>SKU</TableHeadCell>
-                  <TableHeadCell>Type</TableHeadCell>
-                  <TableHeadCell>Manufacturer</TableHeadCell>
-                  <TableHeadCell>Price</TableHeadCell>
-                  <TableHeadCell></TableHeadCell>
-                  <TableHeadCell>
-                    <span className="sr-only">Edit</span>
-                  </TableHeadCell>
-                </TableHead>
-                {currentData.map((product) => (
-                  <Table.Body className="divide-y" key={product.id}>
-                    <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                      <TableCell>
-                        <b>{product.itemName}</b>
-                      </TableCell>
-                      <TableCell>{product.sku}</TableCell>
-                      <TableCell>{product.itemType}</TableCell>
-                      <TableCell>{product.manufacturer}</TableCell>
-                      <TableCell>Rs. {product.itemPrice}</TableCell>
-                      <TableCell></TableCell>
-                      <TableCell>
-                        <Button.Group>
-                          <Button
-                            onClick={() => {
-                              setOpenModalEdit(true);
-                              setFormData(product);
-                            }}
-                            color="gray"
-                            style={{
-                              display:
-                                currentUser.role === "Accountant" ||
-                                  currentUser.role === "Director" ||
-                                  currentUser.role === "StoreKeeper"
-                                  ? "none"
-                                  : "inline-block",
-                            }}
-                          >
-                            <FaUserEdit className="mr-3 h-4 w-4" />
-                            Edit
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              setShowModal(true);
-                              setproductIdToDelete(product.id);
-                            }}
-                            color="gray"
-                            style={{
-                              display:
-                                currentUser.role === "Accountant" ||
-                                  currentUser.role === "Director" ||
-                                  currentUser.role === "StoreKeeper"
-                                  ? "none"
-                                  : "inline-block",
-                            }}
-                          >
-                            <MdDeleteForever className="mr-3 h-4 w-4" />
-                            Delete
-                          </Button>
-                        </Button.Group>
-                      </TableCell>
-                    </TableRow>
-                  </Table.Body>
-                ))}
-              </Table>
+              {products.length > 0 ? (
+                <>
+                  <Table hoverable className="shadow-md w-full">
+                    <TableHead>
+                      <TableHeadCell>Product Name</TableHeadCell>
+                      <TableHeadCell>SKU</TableHeadCell>
+                      <TableHeadCell>Type</TableHeadCell>
+                      <TableHeadCell>Manufacturer</TableHeadCell>
+                      <TableHeadCell>Price</TableHeadCell>
+                      <TableHeadCell></TableHeadCell>
+                      <TableHeadCell>
+                        <span className="sr-only">Edit</span>
+                      </TableHeadCell>
+                    </TableHead>
+                    {currentData.map((product) => (
+                      <Table.Body className="divide-y" key={product.id}>
+                        <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                          <TableCell>
+                            <b>{product.itemName}</b>
+                          </TableCell>
+                          <TableCell>{product.sku}</TableCell>
+                          <TableCell>{product.itemType}</TableCell>
+                          <TableCell>{product.manufacturer}</TableCell>
+                          <TableCell>Rs. {product.itemPrice}</TableCell>
+                          <TableCell></TableCell>
+                          <TableCell>
+                            <Button.Group>
+                              <Button
+                                onClick={() => {
+                                  setOpenModalEdit(true);
+                                  setFormData(product);
+                                }}
+                                color="gray"
+                                style={{
+                                  display:
+                                    currentUser.role === "Accountant" ||
+                                    currentUser.role === "Director" ||
+                                    currentUser.role === "StoreKeeper"
+                                      ? "none"
+                                      : "inline-block",
+                                }}
+                              >
+                                <FaUserEdit className="mr-3 h-4 w-4" />
+                                Edit
+                              </Button>
+                              <Button
+                                onClick={() => {
+                                  setShowModal(true);
+                                  setproductIdToDelete(product.id);
+                                }}
+                                color="gray"
+                                style={{
+                                  display:
+                                    currentUser.role === "Accountant" ||
+                                    currentUser.role === "Director" ||
+                                    currentUser.role === "StoreKeeper"
+                                      ? "none"
+                                      : "inline-block",
+                                }}
+                              >
+                                <MdDeleteForever className="mr-3 h-4 w-4" />
+                                Delete
+                              </Button>
+                            </Button.Group>
+                          </TableCell>
+                        </TableRow>
+                      </Table.Body>
+                    ))}
+                  </Table>
 
-              {/* Pagination */}
-              <div className="flex overflow-x-auto sm:justify-center">
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={onPageChange}
-                    showIcons
-                  />
-                </div>
-              </>
-            ) : (
-              <p>You have no store yet!</p>
+                  {/* Pagination */}
+                  <div className="flex overflow-x-auto sm:justify-center">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={onPageChange}
+                      showIcons
+                    />
+                  </div>
+                </>
+              ) : (
+                <p>You have no products</p>
+              )}
+            </>
           )}
+
           <Modal
             show={showModal}
             onClose={() => setShowModal(false)}
