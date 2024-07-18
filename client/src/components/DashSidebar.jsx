@@ -26,6 +26,7 @@ export default function DashSidebar() {
   const { currentUser } = useSelector((state) => state.user);
   const loaction = useLocation();
   const [count, setCount] = useState(0);
+  const [countStore, setCountStore] = useState(0);
 
   const dispatch = useDispatch();
 
@@ -38,6 +39,15 @@ export default function DashSidebar() {
     }
     fetchShopItemPendingCount();
   }, [loaction.search]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      fetchShopItemPendingCount();
+      fetchStoreItemPendingCount();
+    }, 10000); // Poll every 10 seconds
+
+    return () => clearInterval(intervalId); // Clear interval on component unmount
+  }, [currentUser]);
 
   const handleSignout = async () => {
     try {
@@ -74,9 +84,29 @@ export default function DashSidebar() {
     }
   };
 
+  const fetchStoreItemPendingCount = async () => {
+    try {
+      const res = await fetch("/api/shop-item/pending-count-shop", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        setCountStore(data.shopItemsCount);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   useEffect(() => {
     if (currentUser.role === "Director") {
       fetchShopItemPendingCount();
+      fetchStoreItemPendingCount();
     }
   }, [currentUser.role]);
 
@@ -232,7 +262,7 @@ export default function DashSidebar() {
                       className="mt-2 mb-2"
                       icon={HiBuildingStorefront}
                       active={tab === "approvels-store"}
-                      label="1"
+                      label={countStore > 0 ? countStore : ""}
                       labelColor="red"
                     >
                       Store To Shop

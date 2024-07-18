@@ -355,6 +355,59 @@ function getAllShopsItems(req, res) {
     });
 }
 
+function getAllStoreToShopsItems(req, res) {
+  models.ShopItem.findAll({
+    where: {
+      fromType: "storetoshop",
+      //status: "pending",
+    },
+    include: [
+      {
+        model: models.Shop,
+        as: "shop",
+        include: [
+          {
+            model: models.User,
+            as: "seller",
+          },
+        ],
+      },
+      {
+        model: models.Shop,
+        as: "fromshop",
+        include: [
+          {
+            model: models.User,
+            as: "seller",
+          },
+        ],
+      },
+      {
+        model: models.Product,
+        as: "sendItem",
+
+        include: [
+          {
+            model: models.Store,
+            as: "store",
+          },
+        ],
+      },
+    ],
+  })
+    .then((data) => {
+      res.status(200).json({
+        success: true,
+        message: "Shop items retrieved successfully",
+        shopItems: data,
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching shop items:", err);
+      res.status(500).json({ success: false, message: err });
+    });
+}
+
 function buyItems(req, res) {
   if (req.body.quantity < 1) {
     res.status(400).json({
@@ -500,6 +553,26 @@ function pendingShopItemCount(req, res) {
     });
 }
 
+function pendingStoreItemCount(req, res) {
+  models.ShopItem.count({
+    where: {
+      fromType: "storetoshop",
+      status: "pending",
+    },
+  })
+    .then((data) => {
+      res.status(200).json({
+        success: true,
+        message: "Shop items count retrieved successfully",
+        shopItemsCount: data,
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching shop items count:", err);
+      res.status(500).json({ success: false, message: err });
+    });
+}
+
 module.exports = {
   getAllShopsItems: getAllShopsItems,
   getShopsItems: getShopsItems,
@@ -509,4 +582,6 @@ module.exports = {
   shopItemApprove: shopItemApprove,
   rejectShopItemoShop: rejectShopItemoShop,
   pendingShopItemCount: pendingShopItemCount,
+  getAllStoreToShopsItems: getAllStoreToShopsItems,
+  pendingStoreItemCount: pendingStoreItemCount,
 };

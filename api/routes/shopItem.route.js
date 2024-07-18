@@ -21,6 +21,9 @@ router.get(
   verifyToken,
   shopItemController.getAllShopsItems
 );
+
+router.get("/getallstoretoshopitem", verifyToken, shopItemController.getAllStoreToShopsItems);
+
 router.put("/approveitem/:id", verifyToken, shopItemController.shopItemApprove);
 router.put(
   "/rejectitem/:shopId/:itemId/:fromId/:quantity",
@@ -28,5 +31,6 @@ router.put(
   shopItemController.rejectShopItemoShop
 );
 router.get("/pending-count", verifyToken, shopItemController.pendingShopItemCount);
+router.get("/pending-count-shop", verifyToken, shopItemController.pendingStoreItemCount);
 
 module.exports = router;
