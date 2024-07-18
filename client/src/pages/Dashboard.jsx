@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { Button, Toast } from "flowbite-react";
+import { MdLoop } from "react-icons/md";
+import { HiFire } from "react-icons/hi";
+import { GoChecklist } from "react-icons/go";
+
 import DashDamageProduct from "../components/DashDamageProduct";
 import DashProducts from "../components/DashProducts";
 import DashProfile from "../components/DashProfile";
@@ -40,6 +45,7 @@ export default function Dashboard() {
       setTab(tabFromUrl);
     }
   }, [loaction.search]);
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       <div className="md:w-56">
