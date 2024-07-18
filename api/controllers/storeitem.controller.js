@@ -51,7 +51,13 @@ function sendStoreItemoShop(req, res) {
         if (dataB) {
           let quantity = parseInt(dataB.quantity) + parseInt(req.body.quantity);
           return models.ShopItem.update(
-            { quantity: quantity },
+            {
+              quantity: quantity,
+              status: "pending",
+              lastreceivedquantity: req.body.quantity,
+              fromType: "storetoshop",
+              fromId: id,
+            },
             {
               where: {
                 shopId: shopId,
@@ -64,6 +70,10 @@ function sendStoreItemoShop(req, res) {
             shopId: shopId,
             itemId: itemId,
             quantity: req.body.quantity,
+            status: "pending",
+            lastreceivedquantity: req.body.quantity,
+            fromType: "storetoshop",
+            fromId: id,
           });
         }
       })
@@ -85,8 +95,6 @@ function sendStoreItemoShop(req, res) {
     res.status(500).json({ success: false, message: err.message });
   }
 }
-
-
 
 //Add data to storeitem table: if the store item is not already in the store, add it, else update the quantity
 //only quantity can be updated
