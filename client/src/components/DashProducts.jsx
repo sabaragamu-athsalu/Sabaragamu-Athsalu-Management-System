@@ -44,7 +44,7 @@ export default function DashProducts() {
 
   // Pagiation
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   const totalPages = Math.ceil(products.length / itemsPerPage);
 

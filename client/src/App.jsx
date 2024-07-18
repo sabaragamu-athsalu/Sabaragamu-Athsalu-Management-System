@@ -7,6 +7,8 @@ import SignUp from "./pages/SignUp";
 import Header from "./components/Header";
 import PrivateRoute from "./components/PrivateRoute";
 
+
+
 export default function App() {
   return (
     <BrowserRouter>
