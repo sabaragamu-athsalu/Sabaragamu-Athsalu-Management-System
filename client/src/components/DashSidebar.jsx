@@ -227,11 +227,11 @@ export default function DashSidebar() {
             {currentUser.role === "Director" && (
               <>
                 <Sidebar.Collapse icon={FaFileCircleCheck} label="Approvels">
-                  <Link to="/dashboard?tab=approvels">
+                  <Link to="/dashboard?tab=approvels-store">
                     <Sidebar.Item
                       className="mt-2 mb-2"
                       icon={HiBuildingStorefront}
-                      active={tab === "approvels"}
+                      active={tab === "approvels-store"}
                       label="1"
                       labelColor="red"
                     >
