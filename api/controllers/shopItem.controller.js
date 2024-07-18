@@ -480,6 +480,26 @@ function shopItemApprove(req, res) {
     });
 }
 
+function pendingShopItemCount(req, res) {
+  models.ShopItem.count({
+    where: {
+      fromType: "shoptoshop",
+      status: "pending",
+    },
+  })
+    .then((data) => {
+      res.status(200).json({
+        success: true,
+        message: "Shop items count retrieved successfully",
+        shopItemsCount: data,
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching shop items count:", err);
+      res.status(500).json({ success: false, message: err });
+    });
+}
+
 module.exports = {
   getAllShopsItems: getAllShopsItems,
   getShopsItems: getShopsItems,
@@ -488,4 +508,5 @@ module.exports = {
   buyItems: buyItems,
   shopItemApprove: shopItemApprove,
   rejectShopItemoShop: rejectShopItemoShop,
+  pendingShopItemCount: pendingShopItemCount,
 };

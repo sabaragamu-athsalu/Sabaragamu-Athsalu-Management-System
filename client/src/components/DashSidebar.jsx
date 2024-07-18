@@ -25,6 +25,7 @@ import { FaFileCircleCheck } from "react-icons/fa6";
 export default function DashSidebar() {
   const { currentUser } = useSelector((state) => state.user);
   const loaction = useLocation();
+  const [count, setCount] = useState(0);
 
   const dispatch = useDispatch();
 
@@ -35,6 +36,7 @@ export default function DashSidebar() {
     if (tabFromUrl) {
       setTab(tabFromUrl);
     }
+    fetchShopItemPendingCount();
   }, [loaction.search]);
 
   const handleSignout = async () => {
@@ -52,6 +54,31 @@ export default function DashSidebar() {
       console.log(error.message);
     }
   };
+
+  const fetchShopItemPendingCount = async () => {
+    try {
+      const res = await fetch("/api/shop-item/pending-count", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        setCount(data.shopItemsCount);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser.role === "Director") {
+      fetchShopItemPendingCount();
+    }
+  }, [currentUser.role]);
 
   return (
     <Sidebar
@@ -216,7 +243,7 @@ export default function DashSidebar() {
                       className="mt-2 mb-2"
                       icon={IoMdHome}
                       active={tab === "approvels"}
-                      label="3"
+                      label={count > 0 ? count : ""}
                       labelColor="red"
                     >
                       Shop To Shop
