@@ -261,8 +261,11 @@ export default function DashPOS() {
       orderDetails.dueAmount = calculateDueAmount();
     }
 
+    //I want to print selectedProducts product.id and product.shopId in 
+    console.log(selectedProducts.map((product) => product.itemId));
+
     selectedProducts.forEach((product) => {
-      orderDetails.itemId = product.id;
+      orderDetails.itemId = product.itemId;
       orderDetails.shopId = product.shopId;
       console.log(product.shopId);
       orderDetails.buyDateTime = new Date().toLocaleString();
