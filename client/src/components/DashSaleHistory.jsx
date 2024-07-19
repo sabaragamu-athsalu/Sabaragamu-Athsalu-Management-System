@@ -244,8 +244,18 @@ export default function DashSellerInvetory() {
     );
     doc.setFont("helvetica", "normal");
 
+    // Check if the sale is "Credit" and include due amount if true
+    if (invoice.type === "Credit") {
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text("Due Amount", 10, totalY + 10);
+      doc.text(`Rs.${invoice.dueAmount.toFixed(2)}`, 200, totalY + 10, {
+        align: "right",
+      });
+    }
+
     // Add a horizontal line separator above the footer
-    doc.line(10, totalY + 5, 200, totalY + 5);
+    doc.line(10, totalY + 15, 200, totalY + 15);
 
     // Footer
     doc.setFontSize(10);
@@ -254,11 +264,12 @@ export default function DashSellerInvetory() {
     const text = "Thank you for your business!";
     const textWidth = doc.getTextWidth(text);
     const xCenter = (pageWidth - textWidth) / 2;
-    doc.text(text, xCenter, totalY + 15);
+    doc.text(text, xCenter, totalY + 25);
 
     // Save the PDF with a meaningful file name
     doc.save(`${generateBillId(selectedBillExport)}.pdf`);
   };
+
 
 
   const printBill = () => {
@@ -357,8 +368,18 @@ export default function DashSellerInvetory() {
     );
     doc.setFont("helvetica", "normal");
 
+    // Check if the sale is "Credit" and include due amount if true
+    if (invoice.type === "Credit") {
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      doc.text("Due Amount", 5, totalY + 5);
+      doc.text(`Rs.${invoice.dueAmount.toFixed(2)}`, 55, totalY + 5, {
+        align: "right",
+      });
+    }
+
     // Add a horizontal line separator above the footer
-    doc.line(5, totalY + 3, 55, totalY + 3);
+    doc.line(5, totalY + 8, 55, totalY + 8);
 
     // Footer
     doc.setFontSize(8);
@@ -375,7 +396,7 @@ export default function DashSellerInvetory() {
     const xCenter = (pageWidth - textWidth) / 2;
 
     // Add the centered text at the calculated position
-    doc.text(text, xCenter, totalY + 8);
+    doc.text(text, xCenter, totalY + 11);
 
     // Generate the PDF as a Blob
     const pdfBlob = doc.output("blob");
@@ -397,6 +418,7 @@ export default function DashSellerInvetory() {
       );
     }
   };
+
 
 
   // Function to generate bill ID
@@ -602,7 +624,7 @@ export default function DashSellerInvetory() {
                       </div>
                     </div>
                     <hr className="mb-2" />
-                    <br></br>
+                    <br />
 
                     {selectedBill &&
                       selectedBill.some((sale) => sale.quantity < 0) && (
@@ -670,6 +692,14 @@ export default function DashSellerInvetory() {
                         </tr>
                       </tfoot>
                     </table>
+
+                    {selectedBill && selectedBill[0].type === "Credit" && (
+                      <div className="text-gray-700 mb-4">
+                        <strong>Due Amount:</strong>{" "}
+                        {`Rs.${selectedBill[0].dueAmount.toFixed(2)}`}
+                      </div>
+                    )}
+
                     <div className="text-gray-700 mb-2">
                       Thank you for your business!
                     </div>
