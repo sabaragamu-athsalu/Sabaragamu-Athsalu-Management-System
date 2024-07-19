@@ -13,6 +13,7 @@ const shopItemRoutes = require("./routes/shopItem.route");
 const stordamageproduct= require("./routes/storedamageproduct.route");
 const storeItemRoutes = require("./routes/storeitem.route");
 const customerreturnitemRoutes = require("./routes/customerreturnitem.route");
+const statisticsRoutes = require("./routes/statistics.route");
 
 
 
@@ -39,6 +40,7 @@ app.use("/api/storekeepermanagestore", storeKeepermanagestore);
 app.use("/api/stordamageproduct", stordamageproduct);
 app.use("/api/store-item", storeItemRoutes);
 app.use("/api/customerreturnitem", customerreturnitemRoutes);
+app.use("/api/statistics", statisticsRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
