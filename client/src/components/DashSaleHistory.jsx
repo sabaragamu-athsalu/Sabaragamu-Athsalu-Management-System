@@ -11,6 +11,7 @@ import {
   TableHeadCell,
   TableRow,
   TextInput,
+  Spinner,
 } from "flowbite-react";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
@@ -37,13 +38,14 @@ export default function DashSellerInvetory() {
   const [searchQuery, setSearchQuery] = useState("");
   const [salesDate, setSalesDate] = useState(null);
   const [filteredSales, setFilteredSales] = useState([]);
+  const [createLoding, setCreateLoding] = useState(false);
 
   const isFilterActive =
     searchQuery !== "" || salesDate !== null || salesDate !== "";
 
   // Pagiation
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 6;
   const totalPages = Math.ceil(filteredSales.length / itemsPerPage);
 
   const onPageChange = (page) => setCurrentPage(page);
@@ -68,6 +70,7 @@ export default function DashSellerInvetory() {
   //fetch sales
   const fetchSales = async () => {
     try {
+      setCreateLoding(true);
       const res = await fetch("api/sales-report/getsales");
       const data = await res.json();
       if (res.ok) {
@@ -75,6 +78,7 @@ export default function DashSellerInvetory() {
         const groupedSales = groupSales(data.sales);
         setSales(groupedSales);
         setFilteredSales(groupedSales);
+        setCreateLoding(false);
       }
     } catch (error) {
       console.log(error.message);
@@ -467,6 +471,7 @@ export default function DashSellerInvetory() {
 
   const fetchSalesByShopId = async (shopId) => {
     try {
+      setCreateLoding(true);
       const res = await fetch(`api/sales-report/getsales/${shopId}`);
       const data = await res.json();
       if (res.ok) {
@@ -474,6 +479,7 @@ export default function DashSellerInvetory() {
         const groupedSales = groupSales(data.sales);
         setSales(groupedSales);
         setFilteredSales(groupedSales);
+        setCreateLoding(false);
       }
     } catch (error) {
       console.log(error.message);
@@ -738,98 +744,112 @@ export default function DashSellerInvetory() {
           </Modal>
 
           <div className="mt-4">
-            {currentData.length > 0 ? (
+            {createLoding ? (
+              <div className="flex justify-center items-center h-96">
+                <Spinner size="xl" />
+              </div>
+            ) : (
               <>
-                <Table hoverable className="shadow-md w-full">
-                  <TableHead>
-                    <TableHeadCell>Invoice</TableHeadCell>
-                    <TableHeadCell>Customer Name</TableHeadCell>
-                    <TableHeadCell>Shop Name</TableHeadCell>
-                    <TableHeadCell>Buy Date</TableHeadCell>
-                    <TableHeadCell>Buy Time</TableHeadCell>
-                    {/* <TableHeadCell>Item IDs</TableHeadCell> */}
-                    <TableHeadCell>Total Amount</TableHeadCell>
-                    <TableHeadCell></TableHeadCell>
-                  </TableHead>
-                  <TableBody>
-                    {currentData.map((bill, index) => (
-                      <TableRow
-                        key={index}
-                        className="bg-white dark:border-gray-700 dark:bg-gray-800"
-                      >
-                        <TableCell>{generateBillId(bill)}</TableCell>
-                        <TableCell>
-                          {bill[0].Customer
-                            ? bill[0].Customer.firstname +
-                              " " +
-                              bill[0].Customer.lastname
-                            : "Unknown"}
-                        </TableCell>
-                        {bill[0].Shop ? (
-                          <TableCell>{bill[0].Shop.shopName}</TableCell>
-                        ) : (
-                          <TableCell>Unknown</TableCell>
-                        )}
-                        <TableCell>
-                          {new Date(bill[0].buyDateTime).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          {new Date(bill[0].buyDateTime).toLocaleTimeString()}
-                        </TableCell>
-                        {/* <TableCell>
+                {currentData.length > 0 ? (
+                  <>
+                    <Table hoverable className="shadow-md w-full">
+                      <TableHead>
+                        <TableHeadCell>Invoice</TableHeadCell>
+                        <TableHeadCell>Customer Name</TableHeadCell>
+                        <TableHeadCell>Shop Name</TableHeadCell>
+                        <TableHeadCell>Buy Date</TableHeadCell>
+                        <TableHeadCell>Buy Time</TableHeadCell>
+                        {/* <TableHeadCell>Item IDs</TableHeadCell> */}
+                        <TableHeadCell>Total Amount</TableHeadCell>
+                        <TableHeadCell></TableHeadCell>
+                      </TableHead>
+                      <TableBody>
+                        {currentData.map((bill, index) => (
+                          <TableRow
+                            key={index}
+                            className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                          >
+                            <TableCell>{generateBillId(bill)}</TableCell>
+                            <TableCell>
+                              {bill[0].Customer
+                                ? bill[0].Customer.firstname +
+                                  " " +
+                                  bill[0].Customer.lastname
+                                : "Unknown"}
+                            </TableCell>
+                            {bill[0].Shop ? (
+                              <TableCell>{bill[0].Shop.shopName}</TableCell>
+                            ) : (
+                              <TableCell>Unknown</TableCell>
+                            )}
+                            <TableCell>
+                              {new Date(
+                                bill[0].buyDateTime
+                              ).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              {new Date(
+                                bill[0].buyDateTime
+                              ).toLocaleTimeString()}
+                            </TableCell>
+                            {/* <TableCell>
                         {bill.map((sale) => (
                           <span key={sale.id}>{sale.itemId}, </span>
                         ))}
                       </TableCell> */}
-                        <TableCell>Rs. {calculateTotalAmount(bill)}</TableCell>
-                        <TableCell>
-                          <Button.Group>
-                            <Button
-                              onClick={() => {
-                                setSelectedBill(bill);
-                                setIsModalOpen(true);
-                              }}
-                              color="gray"
-                            >
-                              <CiViewList className="mr-3 h-4 w-4" />
-                              View
-                            </Button>
-                            <Button
-                              color="gray"
-                              onClick={() => {
-                                setSelectedBillExport(bill);
-                              }}
-                            >
-                              <PiExportBold className="mr-3 h-4 w-4" />
-                              Export
-                            </Button>
-                            <Button
-                              color="gray"
-                              onClick={() => {
-                                setSelectBillPrint(bill);
-                              }}
-                            >
-                              <FiPrinter className="mr-3 h-4 w-4" />
-                              Print
-                            </Button>
-                          </Button.Group>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                            <TableCell>
+                              Rs. {calculateTotalAmount(bill)}
+                            </TableCell>
+                            <TableCell>
+                              <Button.Group>
+                                <Button
+                                  onClick={() => {
+                                    setSelectedBill(bill);
+                                    setIsModalOpen(true);
+                                  }}
+                                  color="gray"
+                                >
+                                  <CiViewList className="mr-3 h-4 w-4" />
+                                  View
+                                </Button>
+                                <Button
+                                  color="gray"
+                                  onClick={() => {
+                                    setSelectedBillExport(bill);
+                                  }}
+                                >
+                                  <PiExportBold className="mr-3 h-4 w-4" />
+                                  Export
+                                </Button>
+                                <Button
+                                  color="gray"
+                                  onClick={() => {
+                                    setSelectBillPrint(bill);
+                                  }}
+                                >
+                                  <FiPrinter className="mr-3 h-4 w-4" />
+                                  Print
+                                </Button>
+                              </Button.Group>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
 
-                <div className="flex overflow-x-auto sm:justify-center">
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={onPageChange}
-                    showIcons
-                  />
-                </div>
+                    <div className="flex overflow-x-auto sm:justify-center">
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={onPageChange}
+                        showIcons
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <p>No sales found</p>
+                )}
               </>
-            ) : (
-              <p>No sales found</p>
             )}
           </div>
         </motion.div>

@@ -9,7 +9,14 @@ import {
   HiTrendingUp,
   HiOutlineCurrencyDollar,
 } from "react-icons/hi";
-import { Button, Table, Breadcrumb, Select } from "flowbite-react";
+import {
+  Button,
+  Table,
+  Breadcrumb,
+  Select,
+  Spinner,
+  Dropdown,
+} from "flowbite-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Chart from "chart.js/auto";
@@ -28,8 +35,10 @@ export default function DashboardComp() {
   const [totalCustomersLastMonth, setTotalCustomersLastMonth] = useState(0);
   const [totalCreditSales, setTotalCreditSales] = useState(0);
   const [totalCreditSalesLastMonth, setTotalCreditSalesLastMonth] = useState(0);
+  const [createLoding, setCreateLoding] = useState(false);
   const [chart, setChart] = useState(null);
   const [shops, setShops] = useState([]); //shops
+  const [shopName, setShopName] = useState("All Shops");
 
   //calculate total sales amount
   const calculateTotalSalesAmount = () => {
@@ -196,6 +205,7 @@ export default function DashboardComp() {
         if (salesRes.ok) {
           const userRes = await fetch("/api/user/getusers");
           const userData = await userRes.json();
+
           if (userRes.ok) {
             const usersByMonth = userData.users.reduce((acc, user) => {
               const month = new Date(user.createdAt).toLocaleString("default", {
@@ -332,6 +342,7 @@ export default function DashboardComp() {
   }, []);
 
   const handleChange = (e) => {
+    setShopName(e.target.selectedOptions[0].text);
     const shopId = e.target.value;
     if (shopId) {
       const fetchSalesByShopId = async () => {
@@ -379,7 +390,11 @@ export default function DashboardComp() {
           </Breadcrumb>
           <div className="flex items-center gap-2 mb-4">
             <h1 className="mt-3 mb-3 text-left font-semibold text-xl flex-grow">
-              Dashboard
+              Dashboard:
+              <span className="text-red-500">
+                {" "}
+                {shopName === "Select Shop" ? "All Shops" : shopName}
+              </span>
             </h1>
 
             <select
@@ -396,123 +411,135 @@ export default function DashboardComp() {
             </select>
           </div>
 
-          <div className="flex-wrap flex gap-4 justify-around">
-            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-56 w-full rounded-md shadow-md">
-              <div className="flex justify-between">
-                <div className="">
-                  <h3 className="text-gray-500 text-md uppercase">
-                    Total Income{" "}
-                  </h3>
-                  <p className="text-2xl font-semibold">Rs {totalSaleAmount}</p>
-                </div>
-                <HiOutlineCurrencyDollar className="bg-blue-600  text-white rounded-full text-5xl p-3 shadow-lg" />
-              </div>
-              <div className="flex gap-4 text-sm">
-                <span className="text-green-500 font-semibold flex items-center ">
-                  <HiArrowNarrowUp />
-                  Rs {totalIncomeLastMonth} Last Month
-                </span>
-              </div>
+          {createLoding ? (
+            <div className="flex justify-center items-center h-96">
+              <Spinner size="xl" />
             </div>
+          ) : (
+            <>
+              <div className="flex-wrap flex gap-4 justify-around">
+                <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-56 w-full rounded-md shadow-md">
+                  <div className="flex justify-between">
+                    <div className="">
+                      <h3 className="text-gray-500 text-md uppercase">
+                        Total Income{" "}
+                      </h3>
+                      <p className="text-2xl font-semibold">
+                        Rs {totalSaleAmount}
+                      </p>
+                    </div>
+                    <HiOutlineCurrencyDollar className="bg-blue-600  text-white rounded-full text-5xl p-3 shadow-lg" />
+                  </div>
+                  <div className="flex gap-4 text-sm">
+                    <span className="text-green-500 font-semibold flex items-center ">
+                      <HiArrowNarrowUp />
+                      Rs {totalIncomeLastMonth} Last Month
+                    </span>
+                  </div>
+                </div>
 
-            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-56 w-full rounded-md shadow-md">
-              <div className="flex justify-between">
-                <div className="">
-                  <h3 className="text-gray-500 text-md uppercase">
-                    Income today
-                  </h3>
-                  <p className="text-2xl font-semibold">
-                    Rs {totalSaleAmountToday}
-                  </p>
+                <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-56 w-full rounded-md shadow-md">
+                  <div className="flex justify-between">
+                    <div className="">
+                      <h3 className="text-gray-500 text-md uppercase">
+                        Income today
+                      </h3>
+                      <p className="text-2xl font-semibold">
+                        Rs {totalSaleAmountToday}
+                      </p>
+                    </div>
+                    <HiOutlineCurrencyDollar className="bg-red-600  text-white rounded-full text-5xl p-3 shadow-lg" />
+                  </div>
+                  <div className="flex gap-4 text-sm">
+                    <span className="text-green-500 font-semibold flex items-center ">
+                      <HiArrowNarrowUp />
+                      Rs {totalIncomeLastDay} Last Day
+                    </span>
+                  </div>
                 </div>
-                <HiOutlineCurrencyDollar className="bg-red-600  text-white rounded-full text-5xl p-3 shadow-lg" />
-              </div>
-              <div className="flex gap-4 text-sm">
-                <span className="text-green-500 font-semibold flex items-center ">
-                  <HiArrowNarrowUp />
-                  Rs {totalIncomeLastDay} Last Day
-                </span>
-              </div>
-            </div>
 
-            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-56 w-full rounded-md shadow-md">
-              <div className="flex justify-between">
-                <div className="">
-                  <h3 className="text-gray-500 text-md uppercase">
-                    Credit Sales
-                  </h3>
-                  <p className="text-2xl font-semibold">
-                    Rs {totalCreditSales}
-                  </p>
+                <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-56 w-full rounded-md shadow-md">
+                  <div className="flex justify-between">
+                    <div className="">
+                      <h3 className="text-gray-500 text-md uppercase">
+                        Credit Sales
+                      </h3>
+                      <p className="text-2xl font-semibold">
+                        Rs {totalCreditSales}
+                      </p>
+                    </div>
+                    <HiOutlineCurrencyDollar className="bg-pink-600  text-white rounded-full text-5xl p-3 shadow-lg" />
+                  </div>
+                  <div className="flex gap-4 text-sm">
+                    <span className="text-green-500 font-semibold flex items-center ">
+                      <HiArrowNarrowUp />
+                      Rs {totalCreditSalesLastMonth} Last Month
+                    </span>
+                  </div>
                 </div>
-                <HiOutlineCurrencyDollar className="bg-pink-600  text-white rounded-full text-5xl p-3 shadow-lg" />
-              </div>
-              <div className="flex gap-4 text-sm">
-                <span className="text-green-500 font-semibold flex items-center ">
-                  <HiArrowNarrowUp />
-                  Rs {totalCreditSalesLastMonth} Last Month
-                </span>
-              </div>
-            </div>
 
-            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-56 w-full rounded-md shadow-md">
-              <div className="flex justify-between">
-                <div className="">
-                  <h3 className="text-gray-500 text-md uppercase">
-                    Toatal Sales
-                  </h3>
-                  <p className="text-2xl font-semibold">{totalSalesCount}</p>
+                <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-56 w-full rounded-md shadow-md">
+                  <div className="flex justify-between">
+                    <div className="">
+                      <h3 className="text-gray-500 text-md uppercase">
+                        Toatal Sales
+                      </h3>
+                      <p className="text-2xl font-semibold">
+                        {totalSalesCount}
+                      </p>
+                    </div>
+                    <HiTrendingUp className="bg-green-600  text-white rounded-full text-5xl p-3 shadow-lg" />
+                  </div>
+                  <div className="flex gap-4 text-sm">
+                    <span className="text-green-500 font-semibold flex items-center ">
+                      <HiArrowNarrowUp />
+                      {totalSalesLastDay} Last Day
+                    </span>
+                  </div>
                 </div>
-                <HiTrendingUp className="bg-green-600  text-white rounded-full text-5xl p-3 shadow-lg" />
-              </div>
-              <div className="flex gap-4 text-sm">
-                <span className="text-green-500 font-semibold flex items-center ">
-                  <HiArrowNarrowUp />
-                  {totalSalesLastDay} Last Day
-                </span>
-              </div>
-            </div>
 
-            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-56 w-full rounded-md shadow-md">
-              <div className="flex justify-between">
-                <div className="">
-                  <h3 className="text-gray-500 text-md uppercase">
-                    Total Customers
-                  </h3>
-                  <p className="text-2xl font-semibold">{totalCustomers}</p>
+                <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-56 w-full rounded-md shadow-md">
+                  <div className="flex justify-between">
+                    <div className="">
+                      <h3 className="text-gray-500 text-md uppercase">
+                        Total Customers
+                      </h3>
+                      <p className="text-2xl font-semibold">{totalCustomers}</p>
+                    </div>
+                    <HiUserGroup className="bg-teal-600  text-white rounded-full text-5xl p-3 shadow-lg" />
+                  </div>
+                  <div className="flex gap-4 text-sm">
+                    <span className="text-green-500 font-semibold flex items-center ">
+                      <HiArrowNarrowUp />
+                      {totalCustomersLastMonth} Last Month
+                    </span>
+                  </div>
                 </div>
-                <HiUserGroup className="bg-teal-600  text-white rounded-full text-5xl p-3 shadow-lg" />
               </div>
-              <div className="flex gap-4 text-sm">
-                <span className="text-green-500 font-semibold flex items-center ">
-                  <HiArrowNarrowUp />
-                  {totalCustomersLastMonth} Last Month
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="mt-5 flex flex-wrap gap-8 py-3 mx-auto justify-center">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h1 className="text-lg font-semibold">Sales Overview</h1>
-                {/* <Link to="/dashboard?tab=salesReport">
+              <div className="mt-5 flex flex-wrap gap-8 py-3 mx-auto justify-center">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h1 className="text-lg font-semibold">Sales Overview</h1>
+                    {/* <Link to="/dashboard?tab=salesReport">
                   <Button color="green">See all</Button>
                 </Link> */}
+                  </div>
+                  <canvas id="pieChart" width="400" height="400"></canvas>
+                </div>
+                <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800">
+                  <div className="flex justify-between items-center p-3 text-sm font-semibold">
+                    <h1 className="text-lg font-semibold mr-4">
+                      Monthly Sales Count and Customer Count
+                    </h1>
+                    <Link to="/dashboard?tab=salesReport">
+                      <Button color="green">See all</Button>
+                    </Link>
+                  </div>
+                  <canvas id="monthlyChart" width="400" height="400"></canvas>
+                </div>
               </div>
-              <canvas id="pieChart" width="400" height="400"></canvas>
-            </div>
-            <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800">
-              <div className="flex justify-between items-center p-3 text-sm font-semibold">
-                <h1 className="text-lg font-semibold mr-4">
-                  Monthly Sales Count and Customer Count
-                </h1>
-                <Link to="/dashboard?tab=salesReport">
-                  <Button color="green">See all</Button>
-                </Link>
-              </div>
-              <canvas id="monthlyChart" width="400" height="400"></canvas>
-            </div>
-          </div>
+            </>
+          )}
         </motion.div>
       </AnimatePresence>
     </div>

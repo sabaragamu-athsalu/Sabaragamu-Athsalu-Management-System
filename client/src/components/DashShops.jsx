@@ -57,19 +57,19 @@ export default function DashShops() {
 
   const [seller, setSeller] = useState([]);
 
-   // Pagiation
-   const [currentPage, setCurrentPage] = useState(1);
-   const itemsPerPage = 10;
-   const totalPages = Math.ceil(shops.length / itemsPerPage);
- 
-   const onPageChange = (page) => setCurrentPage(page);
- 
-   const currentData = shops.slice(
-     (currentPage - 1) * itemsPerPage,
-     currentPage * itemsPerPage
-   );
- 
-   // Pagination
+  // Pagiation
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(shops.length / itemsPerPage);
+
+  const onPageChange = (page) => setCurrentPage(page);
+
+  const currentData = shops.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Pagination
 
   const fetchSellers = async () => {
     try {
@@ -85,10 +85,12 @@ export default function DashShops() {
 
   const fetchShops = async () => {
     try {
+      setCreateLoding(true);
       const res = await fetch(`/api/associations/getSellerInfoShop`);
       const data = await res.json();
       if (res.ok) {
         setShops(data.shops);
+        setCreateLoding(false);
         // if (data.shop.length < 9) {
         //   setShowMore(false);
         // }
@@ -440,83 +442,90 @@ export default function DashShops() {
             </motion.div>
           </Modal>
 
-          {currentUser.role == "Admin" ||
-          (currentUser.role == "Director" && currentData.length > 0) ? (
+          {createLoding ? (
+            <div className="flex justify-center items-center h-96">
+              <Spinner size="xl" />
+            </div>
+          ) : (
             <>
-              <Table hoverable className="shadow-md w-full">
-                <TableHead>
-                  <TableHeadCell>Shop ID</TableHeadCell>
-                  <TableHeadCell>Shop Name</TableHeadCell>
-                  <TableHeadCell>Address</TableHeadCell>
-                  <TableHeadCell>Phone Number</TableHeadCell>
-                  <TableHeadCell>Seller Name</TableHeadCell>
-                  <TableHeadCell>
-                    <span className="sr-only">Edit</span>
-                  </TableHeadCell>
-                </TableHead>
-                {shops.map((shop) => (
-                  <Table.Body className="divide-y" key={shop.id}>
-                    <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                      <TableCell>ST:{shop.id}</TableCell>
-                      <TableCell>{shop.shopName}</TableCell>
-                      <TableCell>{shop.address}</TableCell>
-                      <TableCell>{shop.phone}</TableCell>
-                      <TableCell>
-                        {shop.seller
-                          ? shop.seller.firstname
-                          : "No Seller Assigned"}
-                      </TableCell>
-                      <TableCell>
-                        <Button.Group>
-                          <Button
-                            onClick={() => {
-                              setOpenModalEdit(true);
-                              setFormData(shop);
-                            }}
-                            color="gray"
-                            style={{
-                              display:
-                                currentUser.role === "Director"
-                                  ? "none"
-                                  : "inline-block",
-                            }}
-                          >
-                            <FaUserEdit className="mr-3 h-4 w-4" />
-                            Edit
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              setShowModal(true);
-                              setShopIdToDelete(shop.id);
-                            }}
-                            color="gray"
-                            style={{
-                              display:
-                                currentUser.role === "Director"
-                                  ? "none"
-                                  : "inline-block",
-                            }}
-                          >
-                            <MdDeleteForever className="mr-3 h-4 w-4" />
-                            Delete
-                          </Button>
-                        </Button.Group>
-                      </TableCell>
-                    </TableRow>
-                  </Table.Body>
-                ))}
-              </Table>
+              {currentUser.role == "Admin" ||
+              (currentUser.role == "Director" && currentData.length > 0) ? (
+                <>
+                  <Table hoverable className="shadow-md w-full">
+                    <TableHead>
+                      <TableHeadCell>Shop ID</TableHeadCell>
+                      <TableHeadCell>Shop Name</TableHeadCell>
+                      <TableHeadCell>Address</TableHeadCell>
+                      <TableHeadCell>Phone Number</TableHeadCell>
+                      <TableHeadCell>Seller Name</TableHeadCell>
+                      <TableHeadCell>
+                        <span className="sr-only">Edit</span>
+                      </TableHeadCell>
+                    </TableHead>
+                    {shops.map((shop) => (
+                      <Table.Body className="divide-y" key={shop.id}>
+                        <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                          <TableCell>ST:{shop.id}</TableCell>
+                          <TableCell>{shop.shopName}</TableCell>
+                          <TableCell>{shop.address}</TableCell>
+                          <TableCell>{shop.phone}</TableCell>
+                          <TableCell>
+                            {shop.seller
+                              ? shop.seller.firstname
+                              : "No Seller Assigned"}
+                          </TableCell>
+                          <TableCell>
+                            <Button.Group>
+                              <Button
+                                onClick={() => {
+                                  setOpenModalEdit(true);
+                                  setFormData(shop);
+                                }}
+                                color="gray"
+                                style={{
+                                  display:
+                                    currentUser.role === "Director"
+                                      ? "none"
+                                      : "inline-block",
+                                }}
+                              >
+                                <FaUserEdit className="mr-3 h-4 w-4" />
+                                Edit
+                              </Button>
+                              <Button
+                                disabled
+                                onClick={() => {
+                                  setShowModal(true);
+                                  setShopIdToDelete(shop.id);
+                                }}
+                                color="gray"
+                                style={{
+                                  display:
+                                    currentUser.role === "Director"
+                                      ? "none"
+                                      : "inline-block",
+                                }}
+                              >
+                                <MdDeleteForever className="mr-3 h-4 w-4" />
+                                Delete
+                              </Button>
+                            </Button.Group>
+                          </TableCell>
+                        </TableRow>
+                      </Table.Body>
+                    ))}
+                  </Table>
 
-              {/* Pagination */}
-              <div className="flex overflow-x-auto sm:justify-center">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={onPageChange}
-                  showIcons
-                />
-              </div>
-              {/* {showMore && (
+                  {/* Pagination */}
+                  <div className="flex overflow-x-auto sm:justify-center">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={onPageChange}
+                      showIcons
+                    />
+                  </div>
+                  {/* {showMore && (
             <button
               onClick={handleShowMore}
               className="w-full text-teal-500 self-center text-sm py-7"
@@ -524,10 +533,13 @@ export default function DashShops() {
               Show more
             </button>
           )} */}
+                </>
+              ) : (
+                <p>You have no Shop yet!</p>
+              )}
             </>
-          ) : (
-            <p>You have no Shop yet!</p>
           )}
+
           <Modal
             show={showModal}
             onClose={() => setShowModal(false)}
