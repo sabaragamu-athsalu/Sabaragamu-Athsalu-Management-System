@@ -288,6 +288,9 @@ function getShopsItems(req, res) {
         ],
       },
     ],
+    order: [
+      ["updatedAt", "DESC"], // Sorting by updatedAt in descending order
+    ],
   })
     .then((data) => {
       res.status(200).json({
@@ -341,6 +344,15 @@ function getAllShopsItems(req, res) {
         ],
       },
     ],
+    order: [
+      [
+        models.sequelize.literal(
+          `CASE WHEN status = 'pending' THEN 0 ELSE 1 END`
+        ),
+        "ASC",
+      ],
+      ["updatedAt", "DESC"], // Sorting by updatedAt in descending order
+    ],
   })
     .then((data) => {
       res.status(200).json({
@@ -393,6 +405,15 @@ function getAllStoreToShopsItems(req, res) {
           },
         ],
       },
+    ],
+    order: [
+      [
+        models.sequelize.literal(
+          `CASE WHEN status = 'pending' THEN 0 ELSE 1 END`
+        ),
+        "ASC",
+      ],
+      ["updatedAt", "DESC"], // Sorting by updatedAt in descending order
     ],
   })
     .then((data) => {
@@ -460,7 +481,10 @@ function buyItems(req, res) {
       // });
 
       models.ShopItem.findOne({
-        where: { id: data.itemId },
+        where: {
+          itemId: data.itemId,
+          shopId: data.shopId,
+        },
       }).then((dataX) => {
         quantity = parseInt(dataX.quantity) - parseInt(data.quantity);
 
@@ -474,7 +498,12 @@ function buyItems(req, res) {
 
         models.ShopItem.update(
           { quantity: dataX.quantity - data.quantity },
-          { where: { id: data.itemId } }
+          {
+            where: {
+              itemId: data.itemId,
+              shopId: data.shopId,
+            },
+          }
         ).then((data) => {
           res.status(200).json({
             success: true,
