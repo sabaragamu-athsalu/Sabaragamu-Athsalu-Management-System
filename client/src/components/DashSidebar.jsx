@@ -506,15 +506,6 @@ export default function DashSidebar() {
                             Approve
                           </Button>
                         </div>
-                        <div className="w-auto">
-                          <Button
-                            color="light"
-                            size="xs"
-                            onClick={() => setShowToast(false)}
-                          >
-                            Not now
-                          </Button>
-                        </div>
                       </div>
                     </div>
                     <Toast.Toggle />
@@ -544,15 +535,6 @@ export default function DashSidebar() {
                             }
                           >
                             Approve
-                          </Button>
-                        </div>
-                        <div className="w-auto">
-                          <Button
-                            color="light"
-                            size="xs"
-                            onClick={() => setShowToast(false)}
-                          >
-                            Not now
                           </Button>
                         </div>
                       </div>

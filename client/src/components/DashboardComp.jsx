@@ -9,7 +9,14 @@ import {
   HiTrendingUp,
   HiOutlineCurrencyDollar,
 } from "react-icons/hi";
-import { Button, Table, Breadcrumb, Select, Spinner } from "flowbite-react";
+import {
+  Button,
+  Table,
+  Breadcrumb,
+  Select,
+  Spinner,
+  Dropdown,
+} from "flowbite-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Chart from "chart.js/auto";
