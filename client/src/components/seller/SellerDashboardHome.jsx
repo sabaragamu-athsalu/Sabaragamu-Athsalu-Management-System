@@ -9,7 +9,18 @@ import {
   HiTrendingUp,
   HiOutlineCurrencyDollar,
 } from "react-icons/hi";
-import { Button, Table, Breadcrumb } from "flowbite-react";
+import {
+  Button,
+  Table,
+  Breadcrumb,
+  TableCell,
+  TableHead,
+  TableHeadCell,
+  TableRow,
+  Pagination,
+  Spinner,
+  Badge,
+} from "flowbite-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Chart from "chart.js/auto";
@@ -30,6 +41,9 @@ export default function SellerDashboardHome() {
   const [totalCreditSalesLastDay, setTotalCreditSalesLastDay] = useState(0);
   const [chart, setChart] = useState(null);
   const [shopName, setShopName] = useState("");
+  const [shopId, setShopId] = useState([]);
+  const [createLoding, setCreateLoding] = useState(false);
+  const [items, setItems] = useState([]);
 
   //calculate total sales amount
   const calculateTotalSalesAmount = () => {
@@ -298,14 +312,32 @@ export default function SellerDashboardHome() {
       }
     };
 
+    const fetchMostSellingItems = async (shopId) => {
+      try {
+        setCreateLoding(true);
+        const res = await fetch(
+          `/api/statistics/getmostsellingitems/${shopId}`
+        );
+        const data = await res.json();
+        if (res.ok) {
+          setItems(data.data);
+          setCreateLoding(false);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
     const fetchShopId = async () => {
       try {
         const res = await fetch(`api/shop/getshop/${currentUser.id}`);
         const data = await res.json();
         if (res.ok) {
           fetchSales(data.shops[0].id);
+          fetchMostSellingItems(data.shops[0].id);
+
           setShopName(data.shops[0].shopName);
-          console.log(shopName);
+          setShopId(data.shops[0].id);
         }
       } catch (error) {
         console.log(error.message);
@@ -357,9 +389,8 @@ export default function SellerDashboardHome() {
           </Breadcrumb>
 
           <h1 className="mt-3 mb-3 text-left font-semibold text-xl">
-            Dashboard:<span className="text-red-500">{" "+shopName} </span>
+            Dashboard:<span className="text-red-500">{" " + shopName} </span>
           </h1>
-         
 
           <div className="flex-wrap flex gap-4 justify-around">
             <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-56 w-full rounded-md shadow-md">
@@ -458,6 +489,63 @@ export default function SellerDashboardHome() {
               </div>
             </div>
           </div>
+
+          <div className="mt-5 flex flex-wrap gap-8 py-3 mx-auto justify-start ml-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 ">
+              <div className="flex items-center justify-between mb-4">
+                <h1 className="text-lg font-semibold uppercase">
+                  Most Selling Items
+                </h1>
+              </div>
+              {createLoding ? (
+                <div className="flex justify-center items-center h-96">
+                  <Spinner size="xl" />
+                </div>
+              ) : (
+                <>
+                  {items.length > 0 ? (
+                    <>
+                      <Table hoverable className=" w-full">
+                        <TableHead>
+                          <TableHeadCell>Item Name</TableHeadCell>
+                          <TableHeadCell>No of Items</TableHeadCell>
+                        </TableHead>
+                        {items.map((item) => (
+                          <Table.Body className="divide-y" key={item.id}>
+                            <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                              <TableCell>{item.Product.itemName}</TableCell>
+
+                              <TableCell>
+                                <div className="flex flex-wrap gap-2">
+                                  <Badge
+                                    color="gray"
+                                    size="sm"
+                                    Label="In Stock"
+                                  >
+                                    {item.count} Qty
+                                  </Badge>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          </Table.Body>
+                        ))}
+                      </Table>
+                    </>
+                  ) : (
+                    <p>You have no Shop yet!</p>
+                  )}
+                </>
+              )}
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 w-1/3">
+              <div className="flex items-center justify-between mb-4">
+                <h1 className="text-lg font-semibold">Sales Overview</h1>
+              </div>
+              <h1>Hi</h1>
+            </div>
+          </div>
+
           <div className="mt-5 flex flex-wrap gap-8 py-3 mx-auto justify-center">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
               <div className="flex items-center justify-between mb-4">
@@ -468,6 +556,7 @@ export default function SellerDashboardHome() {
               </div>
               <canvas id="pieChart" width="400" height="400"></canvas>
             </div>
+
             <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800">
               <div className="flex justify-between  p-3 text-sm font-semibold">
                 <h1 className="text-lg font-semibold">Monthly Sales Report</h1>
