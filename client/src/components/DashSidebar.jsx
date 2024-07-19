@@ -430,7 +430,7 @@ export default function DashSidebar() {
                       Return Items
                     </Sidebar.Item>
                   </Link>
-                  <Link to="/dashboard?tab=creditSales">
+                  <Link to="/dashboard?tab=creditsales">
                     <Sidebar.Item
                       className="mt-2 mb-2"
                       icon={HiChartPie}
@@ -438,7 +438,7 @@ export default function DashSidebar() {
                     >
                       Credit Sales
                     </Sidebar.Item>
-                    </Link>
+                  </Link>
                 </>
               )}
 
