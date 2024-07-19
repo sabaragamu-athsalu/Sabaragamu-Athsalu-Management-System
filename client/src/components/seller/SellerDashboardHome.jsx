@@ -44,6 +44,7 @@ export default function SellerDashboardHome() {
   const [shopId, setShopId] = useState([]);
   const [createLoding, setCreateLoding] = useState(false);
   const [items, setItems] = useState([]);
+  const [highestQtyItems, setHighestQtyItems] = useState([]);
 
   //calculate total sales amount
   const calculateTotalSalesAmount = () => {
@@ -328,6 +329,22 @@ export default function SellerDashboardHome() {
       }
     };
 
+    const fetchHighestQtySellingItems = async (shopId) => {
+      try {
+        setCreateLoding(true);
+        const res = await fetch(
+          `/api/statistics/gethighestqtysellingitems/${shopId}`
+        );
+        const data = await res.json();
+        if (res.ok) {
+          setHighestQtyItems(data.data);
+          setCreateLoding(false);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
     const fetchShopId = async () => {
       try {
         const res = await fetch(`api/shop/getshop/${currentUser.id}`);
@@ -335,6 +352,7 @@ export default function SellerDashboardHome() {
         if (res.ok) {
           fetchSales(data.shops[0].id);
           fetchMostSellingItems(data.shops[0].id);
+          fetchHighestQtySellingItems(data.shops[0].id);
 
           setShopName(data.shops[0].shopName);
           setShopId(data.shops[0].id);
@@ -392,7 +410,7 @@ export default function SellerDashboardHome() {
             Dashboard:<span className="text-red-500">{" " + shopName} </span>
           </h1>
 
-          <div className="flex-wrap flex gap-4 justify-around">
+          <div className="flex-wrap flex gap-4 justify-between">
             <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-56 w-full rounded-md shadow-md">
               <div className="flex justify-between">
                 <div className="">
@@ -490,8 +508,8 @@ export default function SellerDashboardHome() {
             </div>
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-8 py-3 mx-auto justify-start ml-6">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 ">
+          <div className="mt-5 flex flex-wrap gap-4 py-3 mx-auto justify-start">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
               <div className="flex items-center justify-between mb-4">
                 <h1 className="text-lg font-semibold uppercase">
                   Most Selling Items
@@ -508,7 +526,7 @@ export default function SellerDashboardHome() {
                       <Table hoverable className=" w-full">
                         <TableHead>
                           <TableHeadCell>Item Name</TableHeadCell>
-                          <TableHeadCell>No of Items</TableHeadCell>
+                          <TableHeadCell>No of Sells</TableHeadCell>
                         </TableHead>
                         {items.map((item) => (
                           <Table.Body className="divide-y" key={item.id}>
@@ -518,11 +536,11 @@ export default function SellerDashboardHome() {
                               <TableCell>
                                 <div className="flex flex-wrap gap-2">
                                   <Badge
-                                    color="gray"
+                                    color="green"
                                     size="sm"
                                     Label="In Stock"
                                   >
-                                    {item.count} Qty
+                                    No.{item.count}
                                   </Badge>
                                 </div>
                               </TableCell>
@@ -538,11 +556,160 @@ export default function SellerDashboardHome() {
               )}
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 w-1/3">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 ">
               <div className="flex items-center justify-between mb-4">
-                <h1 className="text-lg font-semibold">Sales Overview</h1>
+                <h1 className="text-lg font-semibold uppercase">
+                  Highest Quantity Selling Items
+                </h1>
               </div>
-              <h1>Hi</h1>
+              {createLoding ? (
+                <div className="flex justify-center items-center h-96">
+                  <Spinner size="xl" />
+                </div>
+              ) : (
+                <>
+                  {highestQtyItems.length > 0 ? (
+                    <>
+                      <Table hoverable className=" w-full">
+                        <TableHead>
+                          <TableHeadCell>Item Name</TableHeadCell>
+                          <TableHeadCell>No of Items</TableHeadCell>
+                        </TableHead>
+                        {highestQtyItems.map((highestQtyItem) => (
+                          <Table.Body
+                            className="divide-y"
+                            key={highestQtyItem.id}
+                          >
+                            <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                              <TableCell>
+                                {highestQtyItem.Product.itemName}
+                              </TableCell>
+
+                              <TableCell>
+                                <div className="flex flex-wrap gap-2">
+                                  <Badge
+                                    color="red"
+                                    size="sm"
+                                    Label="In Stock"
+                                  >
+                                    {highestQtyItem.totalQty} Qty
+                                  </Badge>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          </Table.Body>
+                        ))}
+                      </Table>
+                    </>
+                  ) : (
+                    <p>You have no Shop yet!</p>
+                  )}
+                </>
+              )}
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 ">
+              <div className="flex items-center justify-between mb-4">
+                <h1 className="text-lg font-semibold uppercase">
+                  Highest Quantity Selling Items
+                </h1>
+              </div>
+              {createLoding ? (
+                <div className="flex justify-center items-center h-96">
+                  <Spinner size="xl" />
+                </div>
+              ) : (
+                <>
+                  {highestQtyItems.length > 0 ? (
+                    <>
+                      <Table hoverable className=" w-full">
+                        <TableHead>
+                          <TableHeadCell>Item Name</TableHeadCell>
+                          <TableHeadCell>No of Items</TableHeadCell>
+                        </TableHead>
+                        {highestQtyItems.map((highestQtyItem) => (
+                          <Table.Body
+                            className="divide-y"
+                            key={highestQtyItem.id}
+                          >
+                            <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                              <TableCell>
+                                {highestQtyItem.Product.itemName}
+                              </TableCell>
+
+                              <TableCell>
+                                <div className="flex flex-wrap gap-2">
+                                  <Badge
+                                    color="gray"
+                                    size="sm"
+                                    Label="In Stock"
+                                  >
+                                    {highestQtyItem.totalQty} Qty
+                                  </Badge>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          </Table.Body>
+                        ))}
+                      </Table>
+                    </>
+                  ) : (
+                    <p>You have no Shop yet!</p>
+                  )}
+                </>
+              )}
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h1 className="text-lg font-semibold uppercase">
+                  Highest Quantity Selling Items
+                </h1>
+              </div>
+              {createLoding ? (
+                <div className="flex justify-center items-center h-96">
+                  <Spinner size="xl" />
+                </div>
+              ) : (
+                <>
+                  {highestQtyItems.length > 0 ? (
+                    <>
+                      <Table hoverable className=" w-full">
+                        <TableHead>
+                          <TableHeadCell>Item Name</TableHeadCell>
+                          <TableHeadCell>No of Items</TableHeadCell>
+                        </TableHead>
+                        {highestQtyItems.map((highestQtyItem) => (
+                          <Table.Body
+                            className="divide-y"
+                            key={highestQtyItem.id}
+                          >
+                            <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                              <TableCell>
+                                {highestQtyItem.Product.itemName}
+                              </TableCell>
+
+                              <TableCell>
+                                <div className="flex flex-wrap gap-2">
+                                  <Badge
+                                    color="gray"
+                                    size="sm"
+                                    Label="In Stock"
+                                  >
+                                    {highestQtyItem.totalQty} Qty
+                                  </Badge>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          </Table.Body>
+                        ))}
+                      </Table>
+                    </>
+                  ) : (
+                    <p>You have no Shop yet!</p>
+                  )}
+                </>
+              )}
             </div>
           </div>
 
