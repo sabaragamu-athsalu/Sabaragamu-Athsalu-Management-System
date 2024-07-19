@@ -11,6 +11,7 @@ import {
   TableHeadCell,
   TableRow,
   TextInput,
+  Spinner,
 } from "flowbite-react";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
@@ -28,6 +29,7 @@ export default function DashSalesReport() {
   const [filteredSales, setFilteredSales] = useState([]);
   const [totalSaleAmount, setTotalSaleAmount] = useState(0);
   const [selectedSaleType, setSelectedSaleType] = useState("");
+  const [createLoding, setCreateLoding] = useState(false);
   const saleTypes = ["Cash", "Credit"];
 
   const isFilterActive =
@@ -129,10 +131,12 @@ export default function DashSalesReport() {
 
   const fetchSales = async () => {
     try {
+      setCreateLoding(true);
       const res = await fetch("api/sales-report/getsales");
       const data = await res.json();
       if (res.ok) {
         setSales(data.sales);
+        setCreateLoding(false);
       }
     } catch (error) {
       console.log(error.message);
@@ -142,10 +146,12 @@ export default function DashSalesReport() {
   // Fetch sales by shopId
   const fetchSalesByShopId = async (shopId) => {
     try {
+      setCreateLoding(true);
       const res = await fetch(`api/sales-report/getsales/${shopId}`);
       const data = await res.json();
       if (res.ok) {
         setSales(data.sales);
+        setCreateLoding(false);
       }
     } catch (error) {
       console.log(error.message);
@@ -319,48 +325,56 @@ export default function DashSalesReport() {
             </div>
           </div>
           <div className="mt-4">
-            {currentData.length > 0 ? (
-              <>
-                <Table hoverable className="shadow-md w-full">
-                  <TableHead>
-                    <TableHeadCell>Product ID</TableHeadCell>
-                    <TableHeadCell>Product Name</TableHeadCell>
-                    <TableHeadCell>Type</TableHeadCell>
-                    <TableHeadCell>Quantity</TableHeadCell>
-                    <TableHeadCell>Unit Price</TableHeadCell>
-                    <TableHeadCell>Amount Paid</TableHeadCell>
-                  </TableHead>
-                  <TableBody>
-                    {currentData.map((sale) => (
-                      <TableRow
-                        key={sale.id}
-                        className="bg-white dark:border-gray-700 dark:bg-gray-800"
-                      >
-                        <TableCell>Item :{sale.itemId}</TableCell>
-                        <TableCell>{sale.productName}</TableCell>
-                        <TableCell>{sale.type}</TableCell>
-                        <TableCell>{sale.quantity}</TableCell>
-                        <TableCell>Rs. {sale.unitPrice}</TableCell>
-                        <TableCell>
-                          Rs. {sale.unitPrice * sale.quantity}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-
-                {/* Pagination */}
-                <div className="flex overflow-x-auto sm:justify-center">
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={onPageChange}
-                    showIcons
-                  />
-                </div>
-              </>
+            {createLoding ? (
+              <div className="flex justify-center items-center h-96">
+                <Spinner size="xl" />
+              </div>
             ) : (
-              <p>No sales match your search criteria!</p>
+              <>
+                {currentData.length > 0 ? (
+                  <>
+                    <Table hoverable className="shadow-md w-full">
+                      <TableHead>
+                        <TableHeadCell>Product ID</TableHeadCell>
+                        <TableHeadCell>Product Name</TableHeadCell>
+                        <TableHeadCell>Type</TableHeadCell>
+                        <TableHeadCell>Quantity</TableHeadCell>
+                        <TableHeadCell>Unit Price</TableHeadCell>
+                        <TableHeadCell>Amount Paid</TableHeadCell>
+                      </TableHead>
+                      <TableBody>
+                        {currentData.map((sale) => (
+                          <TableRow
+                            key={sale.id}
+                            className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                          >
+                            <TableCell>Item :{sale.itemId}</TableCell>
+                            <TableCell>{sale.productName}</TableCell>
+                            <TableCell>{sale.type}</TableCell>
+                            <TableCell>{sale.quantity}</TableCell>
+                            <TableCell>Rs. {sale.unitPrice}</TableCell>
+                            <TableCell>
+                              Rs. {sale.unitPrice * sale.quantity}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+
+                    {/* Pagination */}
+                    <div className="flex overflow-x-auto sm:justify-center">
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={onPageChange}
+                        showIcons
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <p>No sales match your search criteria!</p>
+                )}
+              </>
             )}
           </div>
         </motion.div>
