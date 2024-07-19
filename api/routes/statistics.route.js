@@ -10,4 +10,6 @@ router.get(
   statisticsController.getmostsellingitems
 );
 
+router.get("/gethighestqtysellingitems/:sellerId", verifyToken, statisticsController.gethighestqtysellingitems);
+
 module.exports = router;
