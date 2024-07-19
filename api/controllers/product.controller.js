@@ -9,7 +9,7 @@ function addProduct(req, res) {
     itemType: req.body.itemType,
     manufacturer: req.body.manufacturer,
     itemPrice: req.body.itemPrice,
-    sku: req.body.sku
+    sku: req.body.sku,
   };
 
   //Validation of the request
@@ -51,12 +51,12 @@ function addProducts(req, res) {
     return res.status(400).json({ message: "Invalid request body" });
   }
 
-  const products = req.body.map(product => ({
+  const products = req.body.map((product) => ({
     itemName: product.itemName,
     itemType: product.itemType,
     manufacturer: product.manufacturer,
     itemPrice: product.itemPrice,
-    sku: product.sku
+    sku: product.sku,
   }));
 
   models.Product.bulkCreate(products)
@@ -127,7 +127,7 @@ function updateProduct(req, res) {
     itemType: req.body.itemType,
     manufacturer: req.body.manufacturer,
     itemPrice: req.body.itemPrice,
-    sku: req.body.sku
+    sku: req.body.sku,
   };
 
   //Validation of the request

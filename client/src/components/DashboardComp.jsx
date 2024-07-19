@@ -31,6 +31,7 @@ export default function DashboardComp() {
   const [createLoding, setCreateLoding] = useState(false);
   const [chart, setChart] = useState(null);
   const [shops, setShops] = useState([]); //shops
+  const [shopName, setShopName] = useState("All Shops");
 
   //calculate total sales amount
   const calculateTotalSalesAmount = () => {
@@ -334,6 +335,7 @@ export default function DashboardComp() {
   }, []);
 
   const handleChange = (e) => {
+    setShopName(e.target.selectedOptions[0].text);
     const shopId = e.target.value;
     if (shopId) {
       const fetchSalesByShopId = async () => {
@@ -381,7 +383,11 @@ export default function DashboardComp() {
           </Breadcrumb>
           <div className="flex items-center gap-2 mb-4">
             <h1 className="mt-3 mb-3 text-left font-semibold text-xl flex-grow">
-              Dashboard
+              Dashboard:
+              <span className="text-red-500">
+                {" "}
+                {shopName === "Select Shop" ? "All Shops" : shopName}
+              </span>
             </h1>
 
             <select

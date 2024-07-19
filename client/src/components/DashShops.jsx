@@ -493,6 +493,7 @@ export default function DashShops() {
                                 Edit
                               </Button>
                               <Button
+                                disabled
                                 onClick={() => {
                                   setShowModal(true);
                                   setShopIdToDelete(shop.id);

@@ -497,6 +497,7 @@ export default function DashProducts() {
                                 Edit
                               </Button>
                               <Button
+                                disabled
                                 onClick={() => {
                                   setShowModal(true);
                                   setproductIdToDelete(product.id);

@@ -288,6 +288,9 @@ function getShopsItems(req, res) {
         ],
       },
     ],
+    order: [
+      ["updatedAt", "DESC"], // Sorting by updatedAt in descending order
+    ],
   })
     .then((data) => {
       res.status(200).json({

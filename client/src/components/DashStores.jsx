@@ -359,7 +359,7 @@ export default function DashStores() {
                       <Alert color="failure">{createUserError}</Alert>
                     )}
                     <div className="flex gap-2 mb-4">
-                      <div>
+                      <div className="w-1/3">
                         <div className="mb-2 block">
                           <Label value="Store Name" />
                         </div>
@@ -377,7 +377,7 @@ export default function DashStores() {
                           ))}
                         </Select>
                       </div>
-                      <div>
+                      <div className="w-1/3">
                         <div className="mb-2 block">
                           <Label value="Store Keeper Name" />
                         </div>
@@ -395,7 +395,7 @@ export default function DashStores() {
                           ))}
                         </Select>
                       </div>
-                      <div>
+                      <div className="w-1/3">
                         <div className="mb-2 block">
                           <Label value="Date" />
                         </div>
@@ -666,6 +666,7 @@ export default function DashStores() {
                                 Edit
                               </Button>
                               <Button
+                                disabled
                                 onClick={() => {
                                   setShowModal(true);
                                   setStoreIdToDelete(store.id);
