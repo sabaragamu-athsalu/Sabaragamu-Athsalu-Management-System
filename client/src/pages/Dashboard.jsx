@@ -31,6 +31,7 @@ import DashStoreKeeperProducts from "../components/storeKeeper/DashStoreKeeperPr
 import DashStoreKeeperSendStock from "../components/storeKeeper/DashStoreKeeperSendStock";
 import DashProductApprovels from "../components/director/DashProductApprovels";
 import DashStoreProductApprovels from "../components/director/DashStoreProductApprovels";
+import DashSendHistory from "../components/DashSendHistory";
 // import StoreKeeperDashboardHome from "../components/storeKeeper/StoreKeeperDashboardHome";
 
 export default function Dashboard() {
@@ -62,6 +63,8 @@ export default function Dashboard() {
       {tab === "stores" && <DashStores />}
       {/* invetory */}
       {tab === "invetory" && <DashSellerInvetory />}
+
+      {tab === "sendhistory" && <DashSendHistory />}
 
       {/* damage product */}
       {tab === "damageproducts" && <DashDamageProduct />}

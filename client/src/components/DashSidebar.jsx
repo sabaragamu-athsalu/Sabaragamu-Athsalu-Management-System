@@ -22,6 +22,7 @@ import { Link, useLocation } from "react-router-dom";
 import { signoutSuccess } from "../redux/user/userSlice";
 import { BsFillHouseAddFill } from "react-icons/bs";
 import { FaFileCircleCheck } from "react-icons/fa6";
+import { IoDocuments } from "react-icons/io5";
 
 import { GoChecklist } from "react-icons/go";
 
@@ -238,6 +239,16 @@ export default function DashSidebar() {
                   </Link>
                 </>
               )}
+
+              <Link to="/dashboard?tab=sendhistory">
+                <Sidebar.Item
+                  className="mt-2 mb-2"
+                  icon={IoDocuments}
+                  active={tab === "sendhistory"}
+                >
+                  Send History
+                </Sidebar.Item>
+              </Link>
 
               {currentUser.role === "Accountant" && (
                 <>
