@@ -419,6 +419,15 @@ export default function DashSidebar() {
                       Return Items
                     </Sidebar.Item>
                   </Link>
+                  <Link to="/dashboard?tab=creditSales">
+                    <Sidebar.Item
+                      className="mt-2 mb-2"
+                      icon={HiChartPie}
+                      active={tab === "creditSales"}
+                    >
+                      Credit Sales
+                    </Sidebar.Item>
+                    </Link>
                 </>
               )}
 
