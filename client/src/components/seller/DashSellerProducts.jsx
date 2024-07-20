@@ -158,7 +158,9 @@ export default function DashSellerProducts() {
               </Table>
             </>
           ) : (
-            <p>You have no store yet!</p>
+            <div className="flex justify-center items-center h-96">
+              <p className="text-gray-400">You have no data yet!</p>
+            </div>
           )}
         </motion.div>
       </AnimatePresence>

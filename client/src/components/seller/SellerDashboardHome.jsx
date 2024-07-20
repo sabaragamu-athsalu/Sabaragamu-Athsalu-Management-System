@@ -552,7 +552,9 @@ export default function SellerDashboardHome() {
                       </Table>
                     </>
                   ) : (
-                    <p>You have no Shop yet!</p>
+                    <div className="flex justify-center items-center h-96">
+                      <p className="text-gray-400">You have no data yet!</p>
+                    </div>
                   )}
                 </>
               )}
@@ -600,7 +602,9 @@ export default function SellerDashboardHome() {
                       </Table>
                     </>
                   ) : (
-                    <p>You have no Shop yet!</p>
+                    <div className="flex justify-center items-center h-96">
+                      <p className="text-gray-400">You have no data yet!</p>
+                    </div>
                   )}
                 </>
               )}
@@ -652,7 +656,9 @@ export default function SellerDashboardHome() {
                       </Table>
                     </>
                   ) : (
-                    <p>You have no Shop yet!</p>
+                    <div className="flex justify-center items-center h-96">
+                      <p className="text-gray-400">You have no data yet!</p>
+                    </div>
                   )}
                 </>
               )}
@@ -704,7 +710,9 @@ export default function SellerDashboardHome() {
                       </Table>
                     </>
                   ) : (
-                    <p>You have no Shop yet!</p>
+                    <div className="flex justify-center items-center h-96">
+                      <p className="text-gray-400">You have no data yet!</p>
+                    </div>
                   )}
                 </>
               )}

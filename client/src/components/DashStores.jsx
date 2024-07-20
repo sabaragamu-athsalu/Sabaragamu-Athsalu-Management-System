@@ -707,7 +707,9 @@ export default function DashStores() {
           )} */}
                 </>
               ) : (
-                <p>You have no store yet!</p>
+                <div className="flex justify-center items-center h-96">
+                  <p className="text-gray-400">You have no data yet!</p>
+                </div>
               )}
             </>
           )}

@@ -372,7 +372,9 @@ export default function DashSalesReport() {
                     </div>
                   </>
                 ) : (
-                  <p>No sales match your search criteria!</p>
+                  <div className="flex justify-center items-center h-96">
+                    <p className="text-gray-400">You have no data yet!</p>
+                  </div>
                 )}
               </>
             )}
