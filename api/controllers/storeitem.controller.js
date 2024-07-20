@@ -116,7 +116,7 @@ function rejectShopItemoShop(req, res) {
     models.ShopItem.update(
       {
         quantity: dataX.quantity - req.params.quantity,
-        status: "rejected",
+        status: quantity == 0 ? "rejected" : "approved",
       },
       {
         where: {

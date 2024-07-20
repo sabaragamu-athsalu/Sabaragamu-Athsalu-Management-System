@@ -71,11 +71,25 @@ function sendShopItemoShop(req, res) {
                   }
                 )
                   .then((data) => {
-                    res.status(200).json({
-                      success: true,
-                      message: "Updated already existing shop item",
-                      shopItem: data,
-                    });
+                    models.ItemSendHistory.create({
+                      sendId: req.params.shopId,
+                      receivedId: req.params.fromShopId,
+                      itemId: req.params.itemId,
+                      quantity: req.params.quantity,
+                      status: "pending",
+                      type: "shoptoshop",
+                    })
+                      .then((data) => {
+                        res.status(200).json({
+                          success: true,
+                          message: "Recorded item send history",
+                          shopItem: data,
+                        });
+                      })
+                      .catch((err) => {
+                        console.error("Error sending shop item:", err);
+                        res.status(500).json({ success: false, message: err });
+                      });
                   })
                   .catch((err) => {
                     console.error("Error sending shop item:", err);
@@ -92,11 +106,25 @@ function sendShopItemoShop(req, res) {
                   fromId: req.params.shopId,
                 })
                   .then((data) => {
-                    res.status(200).json({
-                      success: true,
-                      message: "Created new shop item",
-                      shopItem: data,
-                    });
+                    models.ItemSendHistory.create({
+                      sendId: req.params.shopId,
+                      receivedId: req.params.fromShopId,
+                      itemId: req.params.itemId,
+                      quantity: req.params.quantity,
+                      status: "pending",
+                      type: "shoptoshop",
+                    })
+                      .then((data) => {
+                        res.status(200).json({
+                          success: true,
+                          message: "Recorded item send history",
+                          shopItem: data,
+                        });
+                      })
+                      .catch((err) => {
+                        console.error("Error sending shop item:", err);
+                        res.status(500).json({ success: false, message: err });
+                      });
                   })
                   .catch((err) => {
                     console.error("Error sending shop item:", err);
@@ -143,7 +171,7 @@ function rejectShopItemoShop(req, res) {
     models.ShopItem.update(
       {
         quantity: dataX.quantity - req.params.quantity,
-        status: "rejected",
+        status: quantity == 0 ? "rejected" : "approved",
       },
       {
         where: {
@@ -186,11 +214,32 @@ function rejectShopItemoShop(req, res) {
                   }
                 )
                   .then((data) => {
-                    res.status(200).json({
-                      success: true,
-                      message: "Updated already existing shop item",
-                      shopItem: data,
-                    });
+                    models.ItemSendHistory.update(
+                      {
+                        status: "rejected",
+                      },
+                      {
+                        where: {
+                          itemId: req.params.itemId,
+                          sendId: req.params.fromId,
+                          receivedId: req.params.shopId,
+                          type: "shoptoshop",
+                          status: "pending",
+                          quantity: req.params.quantity,
+                        },
+                      }
+                    )
+                      .then((data) => {
+                        res.status(200).json({
+                          success: true,
+                          message: "Shop item rejected successfully",
+                          shopItem: data,
+                        });
+                      })
+                      .catch((err) => {
+                        console.error("Error rejecting shop item:", err);
+                        res.status(500).json({ success: false, message: err });
+                      });
                   })
                   .catch((err) => {
                     console.error("Error sending shop item:", err);
@@ -203,11 +252,32 @@ function rejectShopItemoShop(req, res) {
                   quantity: req.params.quantity,
                 })
                   .then((data) => {
-                    res.status(200).json({
-                      success: true,
-                      message: "Created new shop item",
-                      shopItem: data,
-                    });
+                    models.ItemSendHistory.update(
+                      {
+                        status: "rejected",
+                      },
+                      {
+                        where: {
+                          itemId: req.params.itemId,
+                          sendId: req.params.fromId,
+                          receivedId: req.params.shopId,
+                          type: "shoptoshop",
+                          status: "pending",
+                          quantity: req.params.quantity,
+                        },
+                      }
+                    )
+                      .then((data) => {
+                        res.status(200).json({
+                          success: true,
+                          message: "Shop item rejected successfully",
+                          shopItem: data,
+                        });
+                      })
+                      .catch((err) => {
+                        console.error("Error rejecting shop item:", err);
+                        res.status(500).json({ success: false, message: err });
+                      });
                   })
                   .catch((err) => {
                     console.error("Error sending shop item:", err);
@@ -540,11 +610,30 @@ function shopItemApprove(req, res) {
           ],
         })
           .then((data) => {
-            res.status(200).json({
-              success: true,
-              message: "Shop item approved successfully",
-              shopItem: data,
-            });
+            models.ItemSendHistory.update(
+              {
+                status: "approved",
+              },
+              {
+                where: {
+                  itemId: data.itemId,
+                  sendId: data.fromId,
+                  receivedId: data.shopId,
+                  type: "shoptoshop",
+                },
+              }
+            )
+              .then((data) => {
+                res.status(200).json({
+                  success: true,
+                  message: "Shop item approved successfully",
+                  shopItem: data,
+                });
+              })
+              .catch((err) => {
+                console.error("Error approving shop item:", err);
+                res.status(500).json({ success: false, message: err });
+              });
           })
           .catch((err) => {
             console.error("Error fetching shop item:", err);
