@@ -331,22 +331,6 @@ export default function DashSellerSendStock() {
                         <div className="flex gap-2 mb-4">
                           <div className="w-1/2">
                             <div className="mb-2 block">
-                              <Label value="Item Quantity" />
-                            </div>
-
-                            <TextInput
-                              id="quantity"
-                              type="number"
-                              placeholder="10"
-                              required
-                              shadow
-                              onChange={handleChange}
-                              defaultValue={1}
-                              min="0"
-                            />
-                          </div>
-                          <div className="w-1/2">
-                            <div className="mb-2 block">
                               <Label value="Select Shop" />
                             </div>
                             <Select
@@ -369,6 +353,22 @@ export default function DashSellerSendStock() {
                                   </option>
                                 ))}
                             </Select>
+                          </div>
+                          <div className="w-1/2">
+                            <div className="mb-2 block">
+                              <Label value="Item Quantity" />
+                            </div>
+
+                            <TextInput
+                              id="quantity"
+                              type="number"
+                              placeholder="10"
+                              required
+                              shadow
+                              onChange={handleChange}
+                              defaultValue={1}
+                              min="0"
+                            />
                           </div>
                         </div>
 
