@@ -1,5 +1,7 @@
 import { React, useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { HiAdjustments, HiClipboardList, HiUserCircle } from "react-icons/hi";
+import { MdDashboard } from "react-icons/md";
 import {
   Table,
   TableBody,
@@ -18,6 +20,8 @@ import {
   Select,
   Spinner,
   Pagination,
+  Badge,
+  Tabs,
 } from "flowbite-react";
 import { FaUserEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
@@ -37,12 +41,23 @@ import {
   HiOutlineExclamationCircle,
   HiPlusCircle,
   HiUserAdd,
+  HiCheckCircle,
 } from "react-icons/hi";
+import { HiBuildingStorefront } from "react-icons/hi2";
+
+import { MdOutlineAccessTimeFilled } from "react-icons/md";
+import { MdCancel } from "react-icons/md";
+import { IoMdClose } from "react-icons/io";
+import { CiViewList } from "react-icons/ci";
+import { FiPrinter } from "react-icons/fi";
+import { PiExportBold } from "react-icons/pi";
+
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function DashSendHistory() {
   const { currentUser } = useSelector((state) => state.user);
-  const [stores, setStores] = useState([]);
+  const [historyData, setHistoryData] = useState([]);
+
   const [skeeperMstores, setstoreStoreKeeper] = useState([]);
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -62,17 +77,44 @@ export default function DashSendHistory() {
 
   // Pagiation
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
-  const totalPages = Math.ceil(skeeperMstores.length / itemsPerPage);
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(historyData.length / itemsPerPage);
 
   const onPageChange = (page) => setCurrentPage(page);
 
-  const currentData = skeeperMstores.slice(
+  const currentData = historyData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
   // Pagination
+
+  const fetchAllItemSendHistoryShop = async () => {
+    try {
+      setCreateLoding(true);
+      const response = await fetch(
+        "/api/itemsendhistory/getallitemsendhistoryshop",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${currentUser.token}`,
+          },
+        }
+      );
+      const responseData = await response.json();
+      if (responseData.success) {
+        setHistoryData(responseData.data);
+        setCreateLoding(false);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllItemSendHistoryShop();
+  }, []);
 
   return (
     <div className="p-3 w-full">
@@ -96,57 +138,121 @@ export default function DashSendHistory() {
             Items Send History
           </h1>
 
-          {createLoding ? (
-            <div className="flex justify-center items-center h-96">
-              <Spinner size="xl" />
-            </div>
-          ) : (
-            <>
-              {currentUser.role == "Admin" ||
-              (currentUser.role == "Director" && currentData.length > 0) ? (
-                <>
-                  <Table hoverable className="shadow-md w-full">
-                    <TableHead>
-                      <TableHeadCell>Store ID</TableHeadCell>
-                      <TableHeadCell>Store Name</TableHeadCell>
-                      <TableHeadCell>Address</TableHeadCell>
-                      <TableHeadCell>Phone Number</TableHeadCell>
-                      <TableHeadCell>Store Keeper Name</TableHeadCell>
-                      <TableHeadCell>Date of Assign</TableHeadCell>
-                      <TableHeadCell>
-                        <span className="sr-only">Edit</span>
-                      </TableHeadCell>
-                    </TableHead>
-                    {currentData.map((store) => (
-                      <Table.Body className="divide-y" key={store.id}>
-                        <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                          <TableCell>ST:{store.id}</TableCell>
-                          <TableCell>{store.storeName}</TableCell>
-                          <TableCell>{store.address}</TableCell>
-                          <TableCell>{store.phone}</TableCell>
-                          <TableCell>{store.storeKeeperFirstName}</TableCell>
-                          <TableCell>
-                            {store.storeKeeperManageStoreDate}
-                          </TableCell>
-                        </TableRow>
-                      </Table.Body>
-                    ))}
-                  </Table>
-                  {/* Pagination */}
-                  <div className="flex overflow-x-auto sm:justify-center">
-                    <Pagination
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      onPageChange={onPageChange}
-                      showIcons
-                    />
-                  </div>
-                </>
+          <Tabs aria-label="Tabs with underline" variant="underline">
+            <Tabs.Item active title="Shop to Shop" icon={HiBuildingStorefront}>
+              This is{" "}
+              <span className="font-medium text-gray-800 dark:text-white">
+                Shop to Shop
+              </span>{" "}
+              Items Send History
+              <div className="mb-4"></div>
+              {createLoding ? (
+                <div className="flex justify-center items-center h-96">
+                  <Spinner size="xl" />
+                </div>
               ) : (
-                <p>You have no store yet!</p>
+                <>
+                  {currentData.length > 0 ? (
+                    <>
+                      <Table hoverable className="shadow-md w-full">
+                        <TableHead>
+                          <TableHeadCell>Sender</TableHeadCell>
+                          <TableHeadCell>Receiver</TableHeadCell>
+                          <TableHeadCell>Item Name</TableHeadCell>
+                          <TableHeadCell>Unit Price</TableHeadCell>
+                          <TableHeadCell>Send Date</TableHeadCell>
+                          <TableHeadCell>Quantity</TableHeadCell>
+                          <TableHeadCell>Status</TableHeadCell>
+                        </TableHead>
+                        {currentData.map((history) => (
+                          <Table.Body className="divide-y" key={history.id}>
+                            <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                              <TableCell>{history.Sender.shopName}</TableCell>
+                              <TableCell>{history.Receiver.shopName}</TableCell>
+                              <TableCell>{history.Item.itemName}</TableCell>
+                              <TableCell>
+                                Rs. {history.Item.itemPrice}
+                              </TableCell>
+                              <TableCell>
+                                {new Date(
+                                  history.createdAt
+                                ).toLocaleDateString()}{" "}
+                                <br />
+                                {new Date(
+                                  history.createdAt
+                                ).toLocaleTimeString()}
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex flex-wrap gap-2">
+                                  <Badge
+                                    color="gray"
+                                    size="sm"
+                                    Label="In Stock"
+                                  >
+                                    {history.quantity} Qty
+                                  </Badge>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <Badge
+                                  className="pl-3 pr-3 w-20"
+                                  color={
+                                    history.status === "approved"
+                                      ? "green"
+                                      : history.status === "pending"
+                                      ? "yellow"
+                                      : history.status === "rejected"
+                                      ? "red"
+                                      : history.status === "in_review"
+                                      ? "blue"
+                                      : "grey" // Default color if none of the conditions match
+                                  }
+                                  icon={
+                                    history.status === "approved"
+                                      ? HiCheckCircle
+                                      : history.status === "pending"
+                                      ? MdOutlineAccessTimeFilled
+                                      : history.status === "rejected"
+                                      ? MdCancel
+                                      : history.status === "in_review"
+                                      ? MdOutlineAccessTimeFilled
+                                      : MdOutlineAccessTimeFilled // Default color if none of the conditions match
+                                  }
+                                >
+                                  <p className=" capitalize">
+                                    {history.status}
+                                  </p>
+                                </Badge>
+                              </TableCell>
+                            </TableRow>
+                          </Table.Body>
+                        ))}
+                      </Table>
+                      {/* Pagination */}
+                      <div className="flex overflow-x-auto sm:justify-center">
+                        <Pagination
+                          currentPage={currentPage}
+                          totalPages={totalPages}
+                          onPageChange={onPageChange}
+                          showIcons
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <p>You have no store yet!</p>
+                  )}
+                </>
               )}
-            </>
-          )}
+            </Tabs.Item>
+
+            <Tabs.Item active title="Store to Shop" icon={HiBuildingStorefront}>
+              This is{" "}
+              <span className="font-medium text-gray-800 dark:text-white">
+                Store to Shop
+              </span>{" "}
+              Items Send History
+            </Tabs.Item>
+          </Tabs>
         </motion.div>
       </AnimatePresence>
     </div>

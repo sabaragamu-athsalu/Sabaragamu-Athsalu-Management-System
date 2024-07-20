@@ -20,6 +20,9 @@ function getAllItemSendHistoryShop(req, res) {
         as: "Item",
       },
     ],
+    order: [
+      ["createdAt", "DESC"], // Sorting by updatedAt in descending order
+    ],
   })
     .then((items) => {
       res.status(200).json({
