@@ -64,7 +64,7 @@ export default function DashSellerSendStock() {
   const [createUserError, setCreateUserError] = useState(null);
   const [createLoding, setCreateLoding] = useState(false);
   const [seller, setSeller] = useState([]);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({ shopId:"no" });
   const [error, setError] = useState("");
 
   const [shopId, setShopId] = useState([]); // [1
@@ -165,7 +165,7 @@ export default function DashSellerSendStock() {
   };
 
   const handelClear = () => {
-    setFormData({});
+    setFormData({ shopId: "no" });
     setOpenModal(false);
   };
 
@@ -360,7 +360,7 @@ export default function DashSellerSendStock() {
                               required
                               shadow
                             >
-                              <option value="">Select a Shop </option>
+                              <option value="no">Select a Shop </option>
                               {shops
                                 .filter((shop) => shop.id !== shopId) // Exclude the current shop
                                 .map((shop) => (
@@ -378,7 +378,9 @@ export default function DashSellerSendStock() {
                               handleSubmit(formData, selectedProduct);
                             }}
                             color="blue"
-                            disabled={createLoding || error}
+                            disabled={
+                              createLoding || error || formData.shopId === "no"
+                            }
                           >
                             {createLoding ? (
                               <>
