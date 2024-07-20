@@ -88,7 +88,8 @@ export default function DashSellerSendStock() {
         const shopIdData = await shopIdRes.json();
         if (shopIdRes.ok) {
           setShopId(shopIdData.shops[0]);
-
+          const currentShopId = shopIdData.shops[0].id; // Store the current shop ID
+          setShopId(currentShopId);
           const productsRes = await fetch(
             `/api/shop-item/getshopitems/${shopIdData.shops[0].id}`
           );
@@ -224,7 +225,7 @@ export default function DashSellerSendStock() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Modal.Header>Send Item Stock</Modal.Header>
+                  <Modal.Header>Send Item Stock </Modal.Header>
                   <Modal.Body>
                     <div className="space-y-6">
                       <form className="flex flex-col flex-grow gap-4">
@@ -359,12 +360,14 @@ export default function DashSellerSendStock() {
                               required
                               shadow
                             >
-                              <option value="">Select a Shop</option>
-                              {shops.map((shop) => (
-                                <option key={shop.id} value={shop.id}>
-                                  {shop.shopName}
-                                </option>
-                              ))}
+                              <option value="">Select a Shop </option>
+                              {shops
+                                .filter((shop) => shop.id !== shopId) // Exclude the current shop
+                                .map((shop) => (
+                                  <option key={shop.id} value={shop.id}>
+                                    {shop.shopName}
+                                  </option>
+                                ))}
                             </Select>
                           </div>
                         </div>
