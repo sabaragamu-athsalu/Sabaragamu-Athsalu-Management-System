@@ -9,6 +9,11 @@ router.get(
   verifyToken,
   itemsendhistoryController.getAllItemSendHistoryShop
 );
+router.get(
+  "/getallitemsendhistorystore",
+  verifyToken,
+  itemsendhistoryController.getAllItemSendHistoryStore
+);
 
 
 

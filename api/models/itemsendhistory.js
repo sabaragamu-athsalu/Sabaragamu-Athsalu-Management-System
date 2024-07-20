@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
         as: "Sender",
       });
 
+      ItemSendHistory.belongsTo(models.Store, {
+        foreignKey: "sendId",
+        as: "SenderShop",
+      });
+
       ItemSendHistory.belongsTo(models.Shop, {
         foreignKey: "receivedId",
         as: "Receiver",
