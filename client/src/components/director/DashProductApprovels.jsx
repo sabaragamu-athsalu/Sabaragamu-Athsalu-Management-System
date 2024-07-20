@@ -442,7 +442,7 @@ export default function DashProductApprovels() {
                               </td>
                               <td className="text-right text-gray-700 items-end">
                                 {selectedTransfer
-                                  ? selectedTransfer.quantity
+                                  ? selectedTransfer.lastreceivedquantity
                                   : ""}{" "}
                               </td>
 
@@ -458,7 +458,7 @@ export default function DashProductApprovels() {
                                   {selectedTransfer
                                     ? (
                                         selectedTransfer.sendItem.itemPrice *
-                                        selectedTransfer.quantity
+                                        selectedTransfer.lastreceivedquantity
                                       ).toFixed(2)
                                     : ""}
                                 </b>
@@ -588,7 +588,7 @@ export default function DashProductApprovels() {
                               selectedTransfer.fromId,
                               selectedTransfer.itemId,
                               selectedTransfer.shop.id,
-                              selectedTransfer.quantity
+                              selectedTransfer.lastreceivedquantity
                             );
                           }}
                         >
@@ -660,7 +660,7 @@ export default function DashProductApprovels() {
                                     size="sm"
                                     Label="In Stock"
                                   >
-                                    {product.quantity} Qty
+                                    {product.lastreceivedquantity} Qty
                                   </Badge>
                                 </div>
                               </TableCell>
@@ -729,7 +729,9 @@ export default function DashProductApprovels() {
                       </Table>
                     </>
                   ) : (
-                    <p>You have no store yet!</p>
+                    <div className="flex justify-center items-center h-96">
+                      <p className="text-gray-400">You have no data yet!</p>
+                    </div>
                   )}
                 </>
               )}

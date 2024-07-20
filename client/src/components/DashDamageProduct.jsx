@@ -557,7 +557,9 @@ export default function fetchdamageitems() {
           )} */}
             </>
           ) : (
-            <p>You have no Dmage yet!</p>
+            <div className="flex justify-center items-center h-96">
+              <p className="text-gray-400">You have no data yet!</p>
+            </div>
           )}
           <Modal
             show={showModal}
@@ -582,7 +584,7 @@ export default function fetchdamageitems() {
                     <Button color="failure" onClick={handleDeleteUser}>
                       Yes, I'm sure
                     </Button>
-                    
+
                     <Button color="gray" onClick={() => setShowModal(false)}>
                       No, cancel
                     </Button>

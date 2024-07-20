@@ -60,7 +60,7 @@ export default function DashStoreKeeperProducts() {
         );
 
         const productsData = await productsRes.json();
-        
+
         if (productsRes.ok) {
           setProducts(productsData.storeItems);
           if (productsData.storeItems.length < 9) {
@@ -157,18 +157,15 @@ export default function DashStoreKeeperProducts() {
   const handleSubmitUpdate = async (e) => {
     e.preventDefault();
     setCreateLoding(true);
-    
+
     try {
-      const res = await fetch(
-        `/api/store-item/updatestoreitem`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const res = await fetch(`/api/store-item/updatestoreitem`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
       const data = await res.json();
       if (!res.ok) {
         setCreateUserError(data.message);
@@ -198,16 +195,13 @@ export default function DashStoreKeeperProducts() {
 
   const handleDeleteProduct = async () => {
     try {
-      const res = await fetch(
-        `/api/store-item/deletestoreitem`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const res = await fetch(`/api/store-item/deletestoreitem`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
       const data = await res.json();
       if (res.ok) {
         setProducts((prev) =>
@@ -283,29 +277,28 @@ export default function DashStoreKeeperProducts() {
                         <div className="mb-2 block">
                           <Label value="Store Name" />
                         </div>
-                          <TextInput
-                            id="storeId"
-                            type="text"
-                            required
-                            shadow
-                            onChange={handleChange}
-                            defaultValue={formData.storeName}
-                          />
+                        <TextInput
+                          id="storeId"
+                          type="text"
+                          required
+                          shadow
+                          onChange={handleChange}
+                          defaultValue={formData.storeName}
+                        />
                       </div>
                       <div>
                         <div className="mb-2 block">
                           <Label value="Product Name" />
                         </div>
-                        
-                          <TextInput
-                            id="itemId"
-                            type="text"
-                            required
-                            shadow
-                            onChange={handleChange}
-                            defaultValue={formData.itemName}
-                          />
-                        
+
+                        <TextInput
+                          id="itemId"
+                          type="text"
+                          required
+                          shadow
+                          onChange={handleChange}
+                          defaultValue={formData.itemName}
+                        />
                       </div>
                       {/* Quantity */}
                       <div>
@@ -426,7 +419,6 @@ export default function DashStoreKeeperProducts() {
                         color="blue"
                         type="submit"
                         disabled={createLoding}
-                        
                       >
                         {createLoding ? (
                           <>
@@ -485,7 +477,6 @@ export default function DashStoreKeeperProducts() {
                                 quantity: product.quantity,
                                 storeName: product.store.storeName,
                                 itemName: product.item.itemName,
-                              
                               });
                             }}
                             color="gray"
@@ -498,7 +489,7 @@ export default function DashStoreKeeperProducts() {
                               setShowModal(true);
                               setFormData({
                                 storeId: product.storeId,
-                                itemId: product.itemId
+                                itemId: product.itemId,
                               });
                             }}
                             color="gray"
@@ -514,7 +505,9 @@ export default function DashStoreKeeperProducts() {
               </Table>
             </>
           ) : (
-            <p>You have no store yet!</p>
+            <div className="flex justify-center items-center h-96">
+              <p className="text-gray-400">You have no data yet!</p>
+            </div>
           )}
 
           <Modal

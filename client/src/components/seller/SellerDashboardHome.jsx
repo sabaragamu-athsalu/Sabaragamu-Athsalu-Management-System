@@ -400,10 +400,12 @@ export default function SellerDashboardHome() {
           transition={{ duration: 0.5 }}
         >
           <Breadcrumb aria-label="Default breadcrumb example">
-            <Breadcrumb.Item href="#" icon={HiHome}>
-              Home
-            </Breadcrumb.Item>
-            <Breadcrumb.Item>Products</Breadcrumb.Item>
+            <Link to="/dashboard?tab=dash">
+              <Breadcrumb.Item href="#" icon={HiHome}>
+                Home
+              </Breadcrumb.Item>
+            </Link>
+            <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
           </Breadcrumb>
 
           <h1 className="mt-3 mb-3 text-left font-semibold text-xl">
@@ -550,7 +552,9 @@ export default function SellerDashboardHome() {
                       </Table>
                     </>
                   ) : (
-                    <p>You have no Shop yet!</p>
+                    <div className="flex justify-center items-center h-96">
+                      <p className="text-gray-400">You have no data yet!</p>
+                    </div>
                   )}
                 </>
               )}
@@ -587,11 +591,7 @@ export default function SellerDashboardHome() {
 
                               <TableCell>
                                 <div className="flex flex-wrap gap-2">
-                                  <Badge
-                                    color="red"
-                                    size="sm"
-                                    Label="In Stock"
-                                  >
+                                  <Badge color="red" size="sm" Label="In Stock">
                                     {highestQtyItem.totalQty} Qty
                                   </Badge>
                                 </div>
@@ -602,7 +602,9 @@ export default function SellerDashboardHome() {
                       </Table>
                     </>
                   ) : (
-                    <p>You have no Shop yet!</p>
+                    <div className="flex justify-center items-center h-96">
+                      <p className="text-gray-400">You have no data yet!</p>
+                    </div>
                   )}
                 </>
               )}
@@ -654,7 +656,9 @@ export default function SellerDashboardHome() {
                       </Table>
                     </>
                   ) : (
-                    <p>You have no Shop yet!</p>
+                    <div className="flex justify-center items-center h-96">
+                      <p className="text-gray-400">You have no data yet!</p>
+                    </div>
                   )}
                 </>
               )}
@@ -706,7 +710,9 @@ export default function SellerDashboardHome() {
                       </Table>
                     </>
                   ) : (
-                    <p>You have no Shop yet!</p>
+                    <div className="flex justify-center items-center h-96">
+                      <p className="text-gray-400">You have no data yet!</p>
+                    </div>
                   )}
                 </>
               )}
