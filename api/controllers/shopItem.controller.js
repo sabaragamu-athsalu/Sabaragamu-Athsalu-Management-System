@@ -619,7 +619,7 @@ function shopItemApprove(req, res) {
                   itemId: data.itemId,
                   sendId: data.fromId,
                   receivedId: data.shopId,
-                  type: "shoptoshop",
+                  type: data.fromType === "shoptoshop"? "shoptoshop" : "storetoshop",
                 },
               }
             )
