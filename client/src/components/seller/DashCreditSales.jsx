@@ -28,21 +28,65 @@ export default function DashCreditSales() {
   const { currentUser } = useSelector((state) => state.user);
   const [sales, setSales] = useState([]);
   const [salesDate, setSalesDate] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [createLoding, setCreateLoding] = useState(false);
   const [selectedBill, setSelectedBill] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [filteredSales, setFilteredSales] = useState([]);
+
+  const isFilterActive =
+    searchQuery !== "" || salesDate !== null || salesDate !== "";
 
   // Pagiation
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
-  const totalPages = Math.ceil(sales.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredSales.length / itemsPerPage);
 
   const onPageChange = (page) => setCurrentPage(page);
 
-  const currentData = sales.slice(
+  const currentData = filteredSales.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  // Function to handle search by query
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  // Function to handle search by date
+  const handleDateChange = (e) => {
+    // const dateString = e.target.value;
+    // const date = dateString ? new Date(dateString) : null;
+    setSalesDate(e.target.value);
+  };
+
+  // Function to filter sales based on search query and date change
+  const filterSales = () => {
+    const filtered = sales.filter((bill) => {
+      const customerName = bill[0].Customer
+        ? `${bill[0].Customer.firstname} ${bill[0].Customer.lastname}`
+        : "Unknown";
+      const shopName = bill[0].Shop ? bill[0].Shop.shopName : "Unknown";
+      const buyDate = new Date(bill[0].buyDateTime).toLocaleDateString();
+      const buyTime = new Date(bill[0].buyDateTime).toLocaleTimeString();
+      const totalAmount = calculateTotalAmount(bill);
+      const billId = generateBillId(bill);
+      const searchValues = `${customerName} ${shopName} ${buyDate} ${buyTime} ${totalAmount} ${billId}`;
+
+      const matchesQuery = searchValues
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      const matchesDate = salesDate
+        ? new Date(bill[0].buyDateTime).toISOString().split("T")[0] ===
+          salesDate
+        : true;
+
+      return matchesQuery && matchesDate;
+    });
+
+    setFilteredSales(filtered);
+  };
 
   //fetch sales
   const fetchSales = async () => {
@@ -54,7 +98,7 @@ export default function DashCreditSales() {
         // Group sales by customerId, shopId, and buyDateTime
         const groupedSales = groupSales(data.sales);
         setSales(groupedSales);
-        //setFilteredSales(groupedSales);
+        setFilteredSales(groupedSales);
         setCreateLoding(false);
       }
     } catch (error) {
@@ -111,7 +155,7 @@ export default function DashCreditSales() {
         // Group sales by customerId, shopId, and buyDateTime
         const groupedSales = groupSales(data.sales);
         setSales(groupedSales);
-        //setFilteredSales(groupedSales);
+        setFilteredSales(groupedSales);
         setCreateLoding(false);
       }
     } catch (error) {
@@ -143,6 +187,15 @@ export default function DashCreditSales() {
     }
   }, []);
 
+  
+  useEffect(() => {
+    if (isFilterActive) {
+      filterSales();
+    } else {
+      setFilteredSales(sales); // Reset to all sales when no filters are active
+    }
+  }, [searchQuery, salesDate]);
+
   return (
     <div className="p-3 w-full">
       <AnimatePresence>
@@ -162,6 +215,26 @@ export default function DashCreditSales() {
           </Breadcrumb>
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold">Credit Sales</h2>
+            <div className="flex items-center space-x-2">
+              <Label>Filter by Date</Label>
+              <TextInput
+                id="date"
+                type="date"
+                placeholder="Date"
+                onChange={handleDateChange}
+                className="w-full md:w-48 h-10 mb-2 md:mb-0 md:mr-2"
+              />
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center justify-between">
+            <div className="flex items-cente">
+              <TextInput
+                value={searchQuery}
+                onChange={handleSearch}
+                placeholder="Search"
+                className="w-full md:w-52 h-10 mb-2 md:mb-0 md:mr-2"
+              />
+            </div>
           </div>
 
           <div className="mt-4">
