@@ -352,6 +352,15 @@ export default function DashCreditSales() {
                             <TableCell>Rs.{bill[0].dueAmount}</TableCell>
                             <TableCell>
                               <Button
+                                style={{
+                                  display:
+                                    currentUser.role === "Accountant" ||
+                                    currentUser.role === "Director" ||
+                                    currentUser.role === "Admin"
+                                      ? "none"
+                                      : "inline-block",
+                                }}
+                                
                                 onClick={() => {
                                   setSelectedBill(bill);
                                   setIsModalOpen(true);
