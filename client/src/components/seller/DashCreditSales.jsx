@@ -16,10 +16,7 @@ import {
 } from "flowbite-react";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { CiViewList } from "react-icons/ci";
-import { FiPrinter } from "react-icons/fi";
 import { HiHome } from "react-icons/hi";
-import { PiExportBold } from "react-icons/pi";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { MdPayment } from "react-icons/md";
