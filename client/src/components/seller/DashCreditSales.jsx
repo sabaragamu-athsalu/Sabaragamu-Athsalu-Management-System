@@ -12,6 +12,7 @@ import {
   TableRow,
   TextInput,
   Spinner,
+  Alert,
 } from "flowbite-react";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
@@ -22,6 +23,7 @@ import { PiExportBold } from "react-icons/pi";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { MdPayment } from "react-icons/md";
+import { HiInformationCircle } from "react-icons/hi";
 
 export default function DashCreditSales() {
   const theme = useSelector((state) => state.theme.theme);
@@ -34,6 +36,8 @@ export default function DashCreditSales() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filteredSales, setFilteredSales] = useState([]);
   const [paidAmount, setPaidAmount] = useState("");
+  const [showError, setShowError] = useState(false);
+  const [showErrorDueAmountUpdate, setShowErrorDueAmountUpdate] = useState(false);
 
   const isFilterActive =
     searchQuery !== "" || salesDate !== null || salesDate !== "";
@@ -42,9 +46,11 @@ export default function DashCreditSales() {
     if (
       parseFloat(paidAmount) > selectedBill[0].dueAmount ||
       paidAmount === "" ||
-      paidAmount === "0" || paidAmount < 0
+      paidAmount === "0" ||
+      paidAmount < 0
     ) {
-      alert("Please Enter Valid Amount.");
+      setShowError(true);
+      //alert("Please Enter Valid Amount.");
       return;
     }
 
@@ -69,6 +75,7 @@ export default function DashCreditSales() {
       const data = await res.json();
 
       if (data.success) {
+        setShowError(false);
         // Update the sales state
         const updatedSales = sales.map((bill) => {
           if (bill === selectedBill) {
@@ -83,7 +90,8 @@ export default function DashCreditSales() {
         setSales(updatedSales);
         setFilteredSales(updatedSales);
       } else {
-        alert("Failed to update due amount.");
+        setShowErrorDueAmountUpdate(true);
+        //alert("Failed to update due amount.");
       }
 
       setIsModalOpen(false);
@@ -388,8 +396,29 @@ export default function DashCreditSales() {
         </motion.div>
       </AnimatePresence>
 
-      <Modal show={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <Modal
+        show={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setShowError(false);
+          setShowErrorDueAmountUpdate(false);
+        }}
+      >
         <Modal.Header>Pay Credits</Modal.Header>
+        {showError && (
+          <Alert className="mb-3" color="failure" icon={HiInformationCircle}>
+            <span className="font-medium">Error alert!</span>
+            Please Enter Valid Amount.
+          </Alert>
+        )}
+
+        {showErrorDueAmountUpdate && (
+          <Alert className="mb-3" color="failure" icon={HiInformationCircle}>
+            <span className="font-medium">Error alert!</span>
+            Failed to update due amount.
+          </Alert>
+        )}
+
         <Modal.Body>
           <div className="space-y-4">
             <TextInput
