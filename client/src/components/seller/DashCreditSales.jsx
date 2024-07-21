@@ -403,6 +403,14 @@ export default function DashCreditSales() {
                                 </div>
                               ) : (
                                 <button
+                                  style={{
+                                    pointerEvents:
+                                      currentUser.role === "Accountant" ||
+                                      currentUser.role === "Director" ||
+                                      currentUser.role === "Admin"
+                                        ? "none"
+                                        : "auto",
+                                  }}
                                   className="flex items-center text-red-500 bg-transparent border-none cursor-pointer p-0 focus:outline-none"
                                   onClick={() => {
                                     setSelectedBill(bill);
