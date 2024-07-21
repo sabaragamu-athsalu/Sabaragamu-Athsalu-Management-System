@@ -190,7 +190,7 @@ export default function DashSidebar() {
                     <Sidebar.Item
                       className="mt-2 mb-2"
                       icon={HiChartPie}
-                      active={tab === "creditSales"}
+                      active={tab === "creditsales"}
                     >
                       Credit Sales
                     </Sidebar.Item>
