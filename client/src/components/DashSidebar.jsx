@@ -250,16 +250,6 @@ export default function DashSidebar() {
                 </>
               )}
 
-              <Link to="/dashboard?tab=sendhistory">
-                <Sidebar.Item
-                  className="mt-2 mb-2"
-                  icon={IoDocuments}
-                  active={tab === "sendhistory"}
-                >
-                  Send History
-                </Sidebar.Item>
-              </Link>
-
               {currentUser.role === "Accountant" && (
                 <>
                   <Link to="/dashboard?tab=products">
@@ -273,13 +263,21 @@ export default function DashSidebar() {
                   </Link>
 
                   <Link to="/dashboard?tab=saleHistory">
-                    <Sidebar.Item className="mt-2 mb-2" icon={HiClipboardList}>
+                    <Sidebar.Item
+                      className="mt-2 mb-2"
+                      icon={HiClipboardList}
+                      active={tab === "saleHistory"}
+                    >
                       Sales History
                     </Sidebar.Item>
                   </Link>
 
                   <Link to="/dashboard?tab=salesReport">
-                    <Sidebar.Item className="mt-2 mb-2" icon={HiTable}>
+                    <Sidebar.Item
+                      className="mt-2 mb-2"
+                      icon={HiTable}
+                      active={tab === "salesReport"}
+                    >
                       Sales Report
                     </Sidebar.Item>
                   </Link>
@@ -362,13 +360,17 @@ export default function DashSidebar() {
                   </Link>
 
                   <Link to="/dashboard?tab=saleHistory">
-                    <Sidebar.Item className="mt-2 mb-2" icon={HiClipboardList}>
+                    <Sidebar.Item className="mt-2 mb-2" icon={HiClipboardList}
+                    active={tab === "saleHistory"}
+                    >
                       Sales History
                     </Sidebar.Item>
                   </Link>
 
                   <Link to="/dashboard?tab=salesReport">
-                    <Sidebar.Item className="mt-2 mb-2" icon={HiTable}>
+                    <Sidebar.Item className="mt-2 mb-2" icon={HiTable}
+                    active={tab === "salesReport"}
+                    >
                       Sales Report
                     </Sidebar.Item>
                   </Link>
