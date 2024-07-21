@@ -21,6 +21,12 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { MdPayment } from "react-icons/md";
 import { HiInformationCircle } from "react-icons/hi";
+import {
+  FaSearch,
+  FaCreditCard,
+  FaMoneyBillWave,
+  FaDollarSign,
+} from "react-icons/fa";
 
 export default function DashCreditSales() {
   const theme = useSelector((state) => state.theme.theme);
@@ -289,20 +295,45 @@ export default function DashCreditSales() {
             </div>
           </div>
           <div className="flex flex-wrap items-center justify-between">
-            <div className="flex items-cente">
+            <div className="flex items-center w-full md:w-auto mb-2 md:mb-0 md:mr-2">
               <TextInput
                 value={searchQuery}
                 onChange={handleSearch}
                 placeholder="Search"
-                className="w-full md:w-52 h-10 mb-2 md:mb-0 md:mr-2"
+                className="w-full md:w-52 h-10"
               />
+            </div>
+            <div className="flex flex-col md:flex-row items-center">
               {/* Total Amount of credit sales display */}
-              <div className="flex items-center">
-                <Label className="mr-2">Total Amount:</Label>
-                <span>
+              <div className="flex items-center mb-2 md:mb-0 md:mr-2">
+                <FaCreditCard className="mr-2 text-blue-500" />
+                <Label className="mr-2">Total Credit Sales:</Label>
+                <span className="text-blue-500">
                   Rs.{" "}
                   {sales.reduce(
                     (total, bill) => total + calculateTotalAmount(bill),
+                    0
+                  )}
+                </span>
+              </div>
+              {/* Total Due Amount display */}
+              <div className="flex items-center mb-2 md:mb-0 md:mr-2">
+                <FaDollarSign className="mr-2 text-red-500" />
+                <Label className="mr-2">Total Due Amount:</Label>
+                <span className="text-red-500">
+                  Rs.{" "}
+                  {sales.reduce((total, bill) => total + bill[0].dueAmount, 0)}
+                </span>
+              </div>
+              {/* Total Paid Amount display */}
+              <div className="flex items-center">
+                <FaMoneyBillWave className="mr-2 text-green-500" />
+                <Label className="mr-2">Total Paid Amount:</Label>
+                <span className="text-green-500">
+                  Rs.{" "}
+                  {sales.reduce(
+                    (total, bill) =>
+                      total + calculateTotalAmount(bill) - bill[0].dueAmount,
                     0
                   )}
                 </span>
