@@ -513,6 +513,15 @@ export default function DashSidebar() {
                   </Link>
                 </>
               )}
+              <Link to="/dashboard?tab=sendhistory">
+                <Sidebar.Item
+                  className="mt-2 mb-2"
+                  icon={IoDocuments}
+                  active={tab === "sendhistory"}
+                >
+                  Send History
+                </Sidebar.Item>
+              </Link>
 
               <Link onClick={handleSignout}>
                 <Sidebar.Item
