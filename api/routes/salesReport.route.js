@@ -8,5 +8,6 @@ router.get('/getsales', verifyToken, salesReportController.showSalesReport);
 router.get('/getsales/:shopId', verifyToken, salesReportController.showSalesByShopId);
 router.post('/addsale', verifyToken, salesReportController.save);
 router.post('/addsales', verifyToken, salesReportController.addSales);
+router.post("/updateDueAmount/:id", verifyToken, salesReportController.updateDueAmount);
 
 module.exports = router;

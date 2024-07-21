@@ -67,6 +67,28 @@ function save(req, res) {
   });
 }
 
+//function for update due amount
+function updateDueAmount(req, res) {
+  models.CustomerBuyItem.update(
+    { dueAmount: req.body.dueAmount },
+    { where: { id: req.params.id } }
+  )
+    .then((result) => {
+      res.status(200).json({
+        success: true,
+        message: "Due amount updated successfully",
+        sales: result,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error",
+        error: error,
+      });
+    });
+}
+
 //for add data for  testing
 function addSales(req, res) {
   if (!Array.isArray(req.body)) {
@@ -184,4 +206,5 @@ module.exports = {
   save: save,
   addSales: addSales,
   showSalesByShopId: showSalesByShopId,
+  updateDueAmount: updateDueAmount,
 };

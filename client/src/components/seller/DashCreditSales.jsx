@@ -38,26 +38,61 @@ export default function DashCreditSales() {
   const isFilterActive =
     searchQuery !== "" || salesDate !== null || salesDate !== "";
 
-  const handlePayment = () => {
-    if (parseFloat(paidAmount) > selectedBill[0].dueAmount || paidAmount === "" || paidAmount === "0") {
+  const handlePayment = async () => {
+    if (
+      parseFloat(paidAmount) > selectedBill[0].dueAmount ||
+      paidAmount === "" ||
+      paidAmount === "0" || paidAmount < 0
+    ) {
       alert("Please Enter Valid Amount.");
       return;
     }
 
-    const updatedSales = sales.map((bill) => {
-      if (bill === selectedBill) {
-        return bill.map((sale) => ({
-          ...sale,
-          dueAmount: sale.dueAmount - parseFloat(paidAmount),
-        }));
-      }
-      return bill;
-    });
+    try {
+      setCreateLoding(true);
 
-    setSales(updatedSales);
-    setFilteredSales(updatedSales);
-    setIsModalOpen(false);
-    setPaidAmount("");
+      // Assuming selectedBill
+      const res = await fetch(
+        `/api/sales-report/updateDueAmount/${selectedBill[0].id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: selectedBill[0].id,
+            dueAmount: selectedBill[0].dueAmount - parseFloat(paidAmount),
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+        // Update the sales state
+        const updatedSales = sales.map((bill) => {
+          if (bill === selectedBill) {
+            return bill.map((sale) => ({
+              ...sale,
+              dueAmount: sale.dueAmount - parseFloat(paidAmount),
+            }));
+          }
+          return bill;
+        });
+
+        setSales(updatedSales);
+        setFilteredSales(updatedSales);
+      } else {
+        alert("Failed to update due amount.");
+      }
+
+      setIsModalOpen(false);
+      setPaidAmount("");
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setCreateLoding(false);
+    }
   };
 
   // Pagiation
