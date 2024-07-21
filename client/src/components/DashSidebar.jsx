@@ -186,6 +186,16 @@ export default function DashSidebar() {
                     </Sidebar.Item>
                   </Link>
 
+                  <Link to="/dashboard?tab=creditsales">
+                    <Sidebar.Item
+                      className="mt-2 mb-2"
+                      icon={HiChartPie}
+                      active={tab === "creditSales"}
+                    >
+                      Credit Sales
+                    </Sidebar.Item>
+                  </Link>
+
                   <Link to="/dashboard?tab=sendstock">
                     <Sidebar.Item
                       className="mt-2 mb-2"
@@ -235,16 +245,6 @@ export default function DashSidebar() {
                       active={tab === "salesReport"}
                     >
                       Sales Report
-                    </Sidebar.Item>
-                  </Link>
-
-                  <Link to="/dashboard?tab=creditsales">
-                    <Sidebar.Item
-                      className="mt-2 mb-2"
-                      icon={HiChartPie}
-                      active={tab === "creditSales"}
-                    >
-                      Credit Sales
                     </Sidebar.Item>
                   </Link>
                 </>
@@ -372,6 +372,17 @@ export default function DashSidebar() {
                       Sales Report
                     </Sidebar.Item>
                   </Link>
+
+                  <Link to="/dashboard?tab=sendhistory">
+                    <Sidebar.Item
+                      className="mt-2 mb-2"
+                      icon={IoDocuments}
+                      active={tab === "sendhistory"}
+                    >
+                      Send History
+                    </Sidebar.Item>
+                  </Link>
+
                   <Link to="/dashboard?tab=creditsales">
                     <Sidebar.Item
                       className="mt-2 mb-2"
@@ -438,14 +449,32 @@ export default function DashSidebar() {
                   </Link>
 
                   <Link to="/dashboard?tab=saleHistory">
-                    <Sidebar.Item className="mt-2 mb-2" icon={HiClipboardList}>
+                    <Sidebar.Item
+                      className="mt-2 mb-2"
+                      icon={HiClipboardList}
+                      active={tab === "saleHistory"}
+                    >
                       Sales History
                     </Sidebar.Item>
                   </Link>
 
                   <Link to="/dashboard?tab=salesReport">
-                    <Sidebar.Item className="mt-2 mb-2" icon={HiTable}>
+                    <Sidebar.Item
+                      className="mt-2 mb-2"
+                      icon={HiTable}
+                      active={tab === "salesReport"}
+                    >
                       Sales Report
+                    </Sidebar.Item>
+                  </Link>
+
+                  <Link to="/dashboard?tab=sendhistory">
+                    <Sidebar.Item
+                      className="mt-2 mb-2"
+                      icon={IoDocuments}
+                      active={tab === "sendhistory"}
+                    >
+                      Send History
                     </Sidebar.Item>
                   </Link>
 
@@ -513,15 +542,6 @@ export default function DashSidebar() {
                   </Link>
                 </>
               )}
-              <Link to="/dashboard?tab=sendhistory">
-                <Sidebar.Item
-                  className="mt-2 mb-2"
-                  icon={IoDocuments}
-                  active={tab === "sendhistory"}
-                >
-                  Send History
-                </Sidebar.Item>
-              </Link>
 
               <Link onClick={handleSignout}>
                 <Sidebar.Item
