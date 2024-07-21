@@ -33,9 +33,32 @@ export default function DashCreditSales() {
   const [selectedBill, setSelectedBill] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filteredSales, setFilteredSales] = useState([]);
+  const [paidAmount, setPaidAmount] = useState("");
 
   const isFilterActive =
     searchQuery !== "" || salesDate !== null || salesDate !== "";
+
+  const handlePayment = () => {
+    if (parseFloat(paidAmount) > selectedBill[0].dueAmount || paidAmount === "" || paidAmount === "0") {
+      alert("Please Enter Valid Amount.");
+      return;
+    }
+
+    const updatedSales = sales.map((bill) => {
+      if (bill === selectedBill) {
+        return bill.map((sale) => ({
+          ...sale,
+          dueAmount: sale.dueAmount - parseFloat(paidAmount),
+        }));
+      }
+      return bill;
+    });
+
+    setSales(updatedSales);
+    setFilteredSales(updatedSales);
+    setIsModalOpen(false);
+    setPaidAmount("");
+  };
 
   // Pagiation
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,8 +79,6 @@ export default function DashCreditSales() {
 
   // Function to handle search by date
   const handleDateChange = (e) => {
-    // const dateString = e.target.value;
-    // const date = dateString ? new Date(dateString) : null;
     setSalesDate(e.target.value);
   };
 
@@ -110,7 +131,7 @@ export default function DashCreditSales() {
   const groupSales = (sales) => {
     const groupedSales = {};
     sales.forEach((sale) => {
-      if (sale.type == "Credit") {
+      if (sale.type === "Credit") {
         if (!groupedSales[sale.customerId]) {
           groupedSales[sale.customerId] = [sale];
         } else {
@@ -187,7 +208,6 @@ export default function DashCreditSales() {
     }
   }, []);
 
-  
   useEffect(() => {
     if (isFilterActive) {
       filterSales();
@@ -253,7 +273,6 @@ export default function DashCreditSales() {
                         <TableHeadCell>Shop Name</TableHeadCell>
                         <TableHeadCell>Buy Date</TableHeadCell>
                         <TableHeadCell>Buy Time</TableHeadCell>
-                        {/* <TableHeadCell>Item IDs</TableHeadCell> */}
                         <TableHeadCell>Total Amount</TableHeadCell>
                         <TableHeadCell>Due Amount</TableHeadCell>
                         <TableHeadCell></TableHeadCell>
@@ -287,11 +306,6 @@ export default function DashCreditSales() {
                                 bill[0].buyDateTime
                               ).toLocaleTimeString()}
                             </TableCell>
-                            {/* <TableCell>
-                              {bill.map((sale) => (
-                                <span key={sale.id}>{sale.itemId}, </span>
-                              ))}
-                            </TableCell> */}
                             <TableCell>
                               Rs. {calculateTotalAmount(bill)}
                             </TableCell>
@@ -338,6 +352,25 @@ export default function DashCreditSales() {
           </div>
         </motion.div>
       </AnimatePresence>
+
+      <Modal show={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <Modal.Header>Pay Credits</Modal.Header>
+        <Modal.Body>
+          <div className="space-y-4">
+            <TextInput
+              id="paidAmount"
+              type="number"
+              placeholder="Enter amount to pay"
+              value={paidAmount}
+              onChange={(e) => setPaidAmount(e.target.value)}
+              className="w-full"
+            />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={handlePayment}>Submit Payment</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
