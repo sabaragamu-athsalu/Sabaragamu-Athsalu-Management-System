@@ -46,11 +46,28 @@ export default function SellerDashboardHome() {
   const [items, setItems] = useState([]);
   const [highestQtyItems, setHighestQtyItems] = useState([]);
 
-  //calculate total sales amount
+  // Calculate total sales amount considering credit sales
   const calculateTotalSalesAmount = () => {
-    return sales
+    // Calculate cash sales total
+    const cashSalesTotal = sales
       .filter((sale) => sale.type === "Cash")
       .reduce((acc, sale) => acc + sale.quantity * sale.unitPrice, 0);
+
+    // Calculate credit sales total
+    const creditSalesTotal = sales
+      .filter((sale) => sale.type === "Credit")
+      .reduce((acc, sale) => acc + sale.quantity * sale.unitPrice, 0);
+
+    // Calculate total due amount for credit sales
+    const totalDueAmount = sales
+      .filter((sale) => sale.type === "Credit")
+      .reduce((acc, sale) => acc + (sale.dueAmount || 0), 0);
+
+    // Calculate total paid amount for credit sales (total amount - due amount)
+    const totalPaidAmount = creditSalesTotal - totalDueAmount;
+
+    // Calculate total sales amount (cash sales + net credit sales)
+    return cashSalesTotal + totalPaidAmount;
   };
 
   //calculate total sales amount today
