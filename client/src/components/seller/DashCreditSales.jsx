@@ -27,6 +27,7 @@ import {
   FaMoneyBillWave,
   FaDollarSign,
 } from "react-icons/fa";
+import { MdCheckCircle } from "react-icons/md";
 
 export default function DashCreditSales() {
   const theme = useSelector((state) => state.theme.theme);
@@ -395,30 +396,23 @@ export default function DashCreditSales() {
                             </TableCell>
                             <TableCell>Rs.{bill[0].dueAmount}</TableCell>
                             <TableCell>
-                              <Button
-                                style={{
-                                  display:
-                                    currentUser.role === "Accountant" ||
-                                    currentUser.role === "Director" ||
-                                    currentUser.role === "Admin"
-                                      ? "none"
-                                      : "inline-block",
-                                }}
-                                onClick={() => {
-                                  setSelectedBill(bill);
-                                  setIsModalOpen(true);
-                                }}
-                                sx={{
-                                  backgroundColor: "#f44336",
-                                  color: "white",
-                                  "&:hover": {
-                                    backgroundColor: "#d32f2f",
-                                  },
-                                }}
-                              >
-                                <MdPayment className="mr-3 h-4 w-4" />
-                                Pay Credits
-                              </Button>
+                              {bill[0].dueAmount === 0 ? (
+                                <div className="flex items-center text-green-500">
+                                  <MdCheckCircle className="mr-2 h-5 w-5" />
+                                  Paid
+                                </div>
+                              ) : (
+                                <button
+                                  className="flex items-center text-red-500 bg-transparent border-none cursor-pointer p-0 focus:outline-none"
+                                  onClick={() => {
+                                    setSelectedBill(bill);
+                                    setIsModalOpen(true);
+                                  }}
+                                >
+                                  <MdPayment className="mr-2 h-5 w-5" />
+                                  Pay Credits
+                                </button>
+                              )}
                             </TableCell>
                           </TableRow>
                         ))}
