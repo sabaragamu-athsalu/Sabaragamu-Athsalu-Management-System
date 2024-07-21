@@ -34,7 +34,8 @@ export default function DashCreditSales() {
   const [filteredSales, setFilteredSales] = useState([]);
   const [paidAmount, setPaidAmount] = useState("");
   const [showError, setShowError] = useState(false);
-  const [showErrorDueAmountUpdate, setShowErrorDueAmountUpdate] = useState(false);
+  const [showErrorDueAmountUpdate, setShowErrorDueAmountUpdate] =
+    useState(false);
 
   const isFilterActive =
     searchQuery !== "" || salesDate !== null || salesDate !== "";
@@ -172,10 +173,11 @@ export default function DashCreditSales() {
     const groupedSales = {};
     sales.forEach((sale) => {
       if (sale.type === "Credit") {
-        if (!groupedSales[sale.customerId]) {
-          groupedSales[sale.customerId] = [sale];
+        const key = `${sale.customerId}-${sale.shopId}-${sale.buyDateTime}`;
+        if (!groupedSales[key]) {
+          groupedSales[key] = [sale];
         } else {
-          groupedSales[sale.customerId].push(sale);
+          groupedSales[key].push(sale);
         }
       }
     });
@@ -294,6 +296,17 @@ export default function DashCreditSales() {
                 placeholder="Search"
                 className="w-full md:w-52 h-10 mb-2 md:mb-0 md:mr-2"
               />
+              {/* Total Amount of credit sales display */}
+              <div className="flex items-center">
+                <Label className="mr-2">Total Amount:</Label>
+                <span>
+                  Rs.{" "}
+                  {sales.reduce(
+                    (total, bill) => total + calculateTotalAmount(bill),
+                    0
+                  )}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -360,7 +373,6 @@ export default function DashCreditSales() {
                                       ? "none"
                                       : "inline-block",
                                 }}
-                                
                                 onClick={() => {
                                   setSelectedBill(bill);
                                   setIsModalOpen(true);
