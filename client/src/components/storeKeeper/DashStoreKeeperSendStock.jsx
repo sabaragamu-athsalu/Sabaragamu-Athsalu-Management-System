@@ -63,7 +63,7 @@ export default function DashStoreKeeperSendStock() {
   const [createUserError, setCreateUserError] = useState(null);
   const [createLoding, setCreateLoding] = useState(false);
   const [seller, setSeller] = useState([]);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({ shopId: "no" });
 
   const [storeId, setStoreId] = useState(null);
 
@@ -85,7 +85,6 @@ export default function DashStoreKeeperSendStock() {
         );
         const storeIdData = await storeIdRes.json();
         if (storeIdRes.ok) {
-          
           setStoreId(storeIdData.stores[0].storeId);
 
           const productsRes = await fetch(
@@ -93,7 +92,6 @@ export default function DashStoreKeeperSendStock() {
           );
           const productsData = await productsRes.json();
           if (productsRes.ok) {
-            
             setAllProducts(productsData.storeItems);
             if (productsData.storeItems.length < 9) {
               setShowMore(false);
@@ -170,6 +168,11 @@ export default function DashStoreKeeperSendStock() {
     }
     setFormData({ ...formData, [id]: updatedQuantity });
     console.log(formData);
+  };
+
+  const handelClear = () => {
+    setFormData({ shopId: "no" });
+    setOpenModal(false);
   };
 
   return (
@@ -336,7 +339,7 @@ export default function DashStoreKeeperSendStock() {
                               required
                               shadow
                             >
-                              <option value="">Select a Shop</option>
+                              <option value="no">Select a Shop</option>
                               {shops.map((shop) => (
                                 <option key={shop.id} value={shop.id}>
                                   {shop.shopName}
@@ -367,7 +370,7 @@ export default function DashStoreKeeperSendStock() {
                           <Button
                             color="blue"
                             type="submit"
-                            disabled={createLoding}
+                            disabled={createLoding || formData.shopId === "no"}
                           >
                             {createLoding ? (
                               <>
@@ -382,7 +385,7 @@ export default function DashStoreKeeperSendStock() {
                           <Button
                             size="sm"
                             color="gray"
-                            onClick={() => setOpenModal(false)}
+                            onClick={() => handelClear()}
                           >
                             Decline
                           </Button>
