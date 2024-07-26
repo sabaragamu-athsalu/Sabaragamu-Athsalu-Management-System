@@ -38,7 +38,7 @@ export default function DashCustomerReturnItem() {
   const [returnCounts, setReturnCounts] = useState({});
   const [returnReasons, setReturnReasons] = useState({});
   const [returnAlert, setReturnAlert] = useState(false);
-  const [show14DayAlert, setShow14DayAlert] = useState(false);
+  const [show7DayAlert, setShow7DayAlert] = useState(false);
   const [showError, setShowError] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -74,7 +74,7 @@ export default function DashCustomerReturnItem() {
     setReturnCounts({});
     const billId = selectedOption.value;
     const buyDateTime = billDetailsMap[billId][0].buyDateTime;
-    setShow14DayAlert(!isWithinReturnPeriod(buyDateTime)); // Update alert state based on date check
+    setShow7DayAlert(!isWithinReturnPeriod(buyDateTime)); // Update alert state based on date check
   };
 
   // Handle return item selection for a specific dropdown index
@@ -105,7 +105,7 @@ export default function DashCustomerReturnItem() {
     const buyDateTime = new Date(buyDate).getTime();
     const currentDateTime = new Date().getTime();
     const diffInDays = (currentDateTime - buyDateTime) / (1000 * 3600 * 24);
-    return diffInDays <= 14;
+    return diffInDays <= 7;
   };
 
   // Handle add return
@@ -143,7 +143,7 @@ export default function DashCustomerReturnItem() {
       if (res.ok) {
         //alert(data.message);
         setShowError(false);
-        setShow14DayAlert(false);
+        setShow7DayAlert(false);
         setReturnAlert(true);
         setIsSubmitted(true);
         // setIsModalOpen(false);
@@ -584,7 +584,7 @@ export default function DashCustomerReturnItem() {
                         onClick={() => {
                           setIsModalOpen(false);
                           setSelectedBillId("");
-                          setShow14DayAlert(false);
+                          setShow7DayAlert(false);
                           setReturnAlert(false);
                           setShowError(false);
                         }}
@@ -594,14 +594,14 @@ export default function DashCustomerReturnItem() {
                     </button>
                   </div>
                   {/* Alert Component */}
-                  {show14DayAlert && (
+                  {show7DayAlert && (
                     <Alert
                       className="mb-3"
                       color="failure"
                       icon={HiInformationCircle}
                     >
                       <span className="font-medium">Info alert!</span> You can't
-                      return this item as the return period has exceeded 14
+                      return this item as the return period has exceeded 7
                       days.
                     </Alert>
                   )}
@@ -894,7 +894,7 @@ export default function DashCustomerReturnItem() {
                           Object.values(returnCounts).some(
                             (count) => count === 0
                           ) ||
-                          show14DayAlert === true
+                          show7DayAlert === true
                         }
                       >
                         Submit Return
@@ -906,7 +906,7 @@ export default function DashCustomerReturnItem() {
                           // Handle close functionality here
                           setIsModalOpen(false);
                           setSelectedBillId("");
-                          setShow14DayAlert(false);
+                          setShow7DayAlert(false);
                           setReturnAlert(false);
                           setShowError(false);
                           setIsSubmitted(false);
