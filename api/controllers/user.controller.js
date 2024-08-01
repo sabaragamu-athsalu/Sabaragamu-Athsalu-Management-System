@@ -1,5 +1,7 @@
 const models = require("../models");
 const bcrypt = require("bcrypt");
+const fs = require("fs");
+const path = require("path");
 const errorHandler = require("../utils/error");
 const { get } = require("../routes/user.route");
 const sendEmail = require("../utils/email");
@@ -194,12 +196,30 @@ function createUser(req, res, next) {
 
                   models.User.create(newUser)
                     .then(async (result) => {
-                      // Send email notification
+                      const htmlTemplatePath = path.join(
+                        __dirname,
+                        "../email-templates/emailTemplate.html"
+                      );
+                      let htmlTemplate = fs.readFileSync(
+                        htmlTemplatePath,
+                        "utf8"
+                      );
+
+                      // Replace placeholders with actual values
+                      htmlTemplate = htmlTemplate.replace(
+                        "{{username}}",
+                        req.body.username
+                      );
+                      htmlTemplate = htmlTemplate.replace(
+                        "{{password}}",
+                        req.body.password
+                      );
+
                       await sendEmail({
                         to: result.email,
                         subject: "Your Account Created",
                         text: `Your account has been created successfully. Your username is ${req.body.username} and your password is ${req.body.password}`,
-                        html: `<p>Your account has been created successfully. Your username is <strong>${req.body.username}</strong> and your password is <strong>${req.body.password}</strong></p>`,
+                        html: htmlTemplate,
                       });
 
                       res.status(201).json({
