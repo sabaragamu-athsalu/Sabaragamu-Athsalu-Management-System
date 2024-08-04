@@ -5,6 +5,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSun } from "react-icons/fa";
 import Logolight from "../assets/logolight.png";
 import Logodark from "../assets/logodark.png";
+import LogoNew from "../assets/logonew.png";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/theme/themeSlice";
 import { signoutSuccess } from "../redux/user/userSlice";
@@ -43,9 +44,9 @@ export default function Header() {
         className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
       >
         {theme === "light" ? (
-          <img src={Logolight} class="h-10" alt="Flowbite Logo" />
+          <img src={LogoNew} class="h-10" alt="Flowbite Logo" />
         ) : (
-          <img src={Logodark} class="h-10" alt="Flowbite Logo" />
+          <img src={LogoNew} class="h-10" alt="Flowbite Logo" />
         )}
       </Link>
 

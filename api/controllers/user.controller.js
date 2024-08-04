@@ -1,10 +1,12 @@
 const models = require("../models");
 const bcrypt = require("bcrypt");
+const fs = require("fs");
+const path = require("path");
 const errorHandler = require("../utils/error");
 const { get } = require("../routes/user.route");
+const sendEmail = require("../utils/email");
 
 function getUsers(req, res) {
-
   models.User.findAll()
     .then((users) => {
       res.status(200).json({
@@ -42,7 +44,7 @@ function getSellers(req, res, next) {
 }
 
 //get all storekeepers
-function getStorekeepers(req, res, next) {  
+function getStorekeepers(req, res, next) {
   models.User.findAll({ where: { role: "Storekeeper" } })
     .then((storekeepers) => {
       res.status(200).json({
@@ -59,7 +61,6 @@ function getStorekeepers(req, res, next) {
       });
     });
 }
-
 
 function save(req, res) {
   const user = {
@@ -95,14 +96,14 @@ function addUsers(req, res) {
     return res.status(400).json({ message: "Invalid request body" });
   }
 
-  const users = req.body.map(user => ({
+  const users = req.body.map((user) => ({
     firstname: user.firstname,
     lastname: user.lastname,
     phone: user.phone,
     email: user.email,
     password: user.password,
     role: user.role,
-    profilepicurl: user.profilepicurl
+    profilepicurl: user.profilepicurl,
   }));
 
   models.User.bulkCreate(users)
@@ -194,7 +195,33 @@ function createUser(req, res, next) {
                   };
 
                   models.User.create(newUser)
-                    .then((result) => {
+                    .then(async (result) => {
+                      const htmlTemplatePath = path.join(
+                        __dirname,
+                        "../email-templates/emailTemplate.html"
+                      );
+                      let htmlTemplate = fs.readFileSync(
+                        htmlTemplatePath,
+                        "utf8"
+                      );
+
+                      // Replace placeholders with actual values
+                      htmlTemplate = htmlTemplate.replace(
+                        "{{username}}",
+                        req.body.username
+                      );
+                      htmlTemplate = htmlTemplate.replace(
+                        "{{password}}",
+                        req.body.password
+                      );
+
+                      await sendEmail({
+                        to: result.email,
+                        subject: "Your Account Created",
+                        text: `Your account has been created successfully. Your username is ${req.body.username} and your password is ${req.body.password}`,
+                        html: htmlTemplate,
+                      });
+
                       res.status(201).json({
                         success: true,
                         message: "User created successfully",
@@ -447,7 +474,8 @@ function deleteUser(req, res, next) {
       if (error instanceof models.Sequelize.ForeignKeyConstraintError) {
         return res.status(400).json({
           success: false,
-          message: "This user cannot be deleted because they are involved in other activities.",
+          message:
+            "This user cannot be deleted because they are involved in other activities.",
         });
       }
       return res.status(500).json({

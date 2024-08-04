@@ -10,6 +10,7 @@ import {
 } from "../redux/user/userSlice";
 import Logolight from "../assets/logolight.png";
 import Logodark from "../assets/logodark.png";
+import LogoNew from "../assets/logonew.png";
 import { motion } from "framer-motion";
 
 export default function SignIn() {
@@ -77,9 +78,9 @@ export default function SignIn() {
           <div className="flex-1">
             <Link to="/" className="">
               {theme === "light" ? (
-                <img src={Logolight} className="h-16" alt="Flowbite Logo" />
+                <img src={LogoNew} className="h-40" alt="Flowbite Logo" />
               ) : (
-                <img src={Logodark} className="h-16" alt="Flowbite Logo" />
+                <img src={LogoNew} className="h-40" alt="Flowbite Logo" />
               )}
             </Link>
             <p className="text-sm mt-5">
