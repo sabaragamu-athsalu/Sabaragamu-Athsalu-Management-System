@@ -90,7 +90,10 @@ function signIn(req, res) {
 
               res
                 .status(200)
-                .cookie("access_token", token, { httpOnly: true })
+                .cookie("access_token", token, {
+                  httpOnly: true,
+                  maxAge: 86400000,
+                })
                 .json(rest);
             } else {
               return res.status(400).json({
