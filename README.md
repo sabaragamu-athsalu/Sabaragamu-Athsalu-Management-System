@@ -35,8 +35,7 @@ The Sabaragamu Athsalu Inventory Management System is an innovative and robust s
 3. **Install the dependencies for both the API and the client:**
 
    ```sh
-   # Install API dependencies
-   cd api
+   # Install API dependencies the root folder
    npm install
 
    # Install client dependencies
@@ -124,61 +123,11 @@ The Sabaragamu Athsalu Inventory Management System is an innovative and robust s
 
    ```sh
    # Start the API server from the root folder
-   npm start
+   npm run dev
 
    # Start the client server
    cd client
-   npm start
+   npm run dev
    ```
 
-2. **Open `http://localhost:3000` to view the client in the browser.**
-
-## Features
-
-- Efficient management of stock
-- Seamless tracking of inventory levels
-- Automation of inventory tasks
-- Accurate record maintenance
-- Reduced manual errors
-- Timely availability of products
-
-## Contributing
-
-If you want to contribute to this project, please follow these steps:
-
-1. **Fork the repository.**
-2. **Create a new branch:**
-   ```sh
-   git checkout -b feature/your-feature-name
-   ```
-3. **Make your changes and commit them:**
-   ```sh
-   git commit -m "Add some feature"
-   ```
-4. **Push to the branch:**
-   ```sh
-   git push origin feature/your-feature-name
-   ```
-5. **Open a pull request.**
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Additional Sections
-
-Depending on your project's complexity, you might want to include additional sections such as:
-
-### Testing
-
-Explain how to run tests for your application.
-
-### API Documentation
-
-Provide details or links to API documentation if applicable.
-
-### Troubleshooting
-
-Common issues and how to solve them.
-
-Feel free to add any additional information or modify the existing sections to better fit your project's needs.
+2. **Open `http://localhost:5173` to view the client in the browser.**
