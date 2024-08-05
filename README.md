@@ -9,10 +9,6 @@ The Sabaragamu Athsalu Inventory Management System is an innovative and robust s
 1. [Installation](#installation)
 2. [Database Setup](#database-setup)
 3. [Usage](#usage)
-4. [Features](#features)
-5. [Contributing](#contributing)
-6. [License](#license)
-7. [Additional Sections](#additional-sections)
 
 ## Installation
 
