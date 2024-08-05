@@ -80,7 +80,7 @@ The Sabaragamu Athsalu Inventory Management System is an innovative and robust s
 
    ```sh
    mysql -u your_db_user -p
-   CREATE DATABASE your_db_name;
+   CREATE DATABASE sabaragamu_athsalu;
    ```
 
 2. **Using phpMyAdmin:**
