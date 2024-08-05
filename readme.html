@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sabaragamu Athsalu Inventory Management System</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: #2c3e50;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    pre {
+      background: #f4f4f4;
+      padding: 15px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      overflow-x: auto;
+    }
+
+    code {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #eef;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    a {
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    ul,
+    ol {
+      margin: 0 0 20px 20px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    .steps {
+      counter-reset: step;
+    }
+
+    .steps li {
+      position: relative;
+      margin-bottom: 20px;
+      padding-left: 30px;
+    }
+
+    .steps li::before {
+      content: counter(step);
+      counter-increment: step;
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: #3498db;
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Sabaragamu Athsalu Inventory Management System</h1>
+
+    <h2>Description</h2>
+    <p>The Sabaragamu Athsalu Inventory Management System is an innovative and robust solution designed to streamline
+      and optimize inventory processes for our valued client. Our system addresses the critical need for efficient
+      management of stock, seamless tracking of inventory levels, and enhanced operational efficiency. By automating and
+      simplifying inventory tasks, our solution enables the client to maintain accurate records, reduce manual errors,
+      and ensure timely availability of products.</p>
+
+    <h2>Table of Contents</h2>
+    <ol>
+      <li><a href="#installation">Installation</a></li>
+      <li><a href="#database-setup">Database Setup</a></li>
+      <li><a href="#usage">Usage</a></li>
+    </ol>
+
+    <h2 id="installation">Installation</h2>
+
+    <h3>Prerequisites</h3>
+    <ul>
+      <li>Node.js (v12.x or higher)</li>
+      <li>npm (v6.x or higher)</li>
+      <li>MySQL</li>
+    </ul>
+
+    <h3>Steps</h3>
+    <ol class="steps">
+      <li><strong>Download the zip file and extract it:</strong>
+        <pre><code>Sabaragamu-Athsalu-Management-System.zip</code></pre>
+      </li>
+      <li><strong>Navigate to the extracted project directory:</strong>
+        <pre><code>cd Sabaragamu-Athsalu-Management-System</code></pre>
+      </li>
+      <li><strong>Install the dependencies for both the API and the client:</strong>
+        <pre><code>
+# Install API dependencies from the root folder
+npm install
+
+# Install client dependencies
+cd client
+npm install
+                </code></pre>
+      </li>
+    </ol>
+
+    <h2 id="database-setup">Database Setup</h2>
+
+    <h3>Configuration</h3>
+    <p><strong>Update the <code>config/config.json</code> file in the <code>api/config</code> directory to match your
+        database setup. Here is an example configuration for MySQL:</strong></p>
+    <pre><code>{
+  "development": {
+    "username": "your_db_user",
+    "password": "your_db_password",
+    "database": "your_db_name",
+    "host": "your_db_host",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "your_db_user",
+    "password": "your_db_password",
+    "database": "your_db_name",
+    "host": "your_db_host",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "your_db_user",
+    "password": "your_db_password",
+    "database": "your_db_name",
+    "host": "your_db_host",
+    "dialect": "mysql"
+  }
+}</code></pre>
+
+    <h3>Creating the Database</h3>
+    <ol class="steps">
+      <li><strong>Using MySQL CLI:</strong>
+        <pre><code>mysql -u your_db_user -p
+CREATE DATABASE sabaragamu_athsalu;</code></pre>
+      </li>
+      <li><strong>Using phpMyAdmin:</strong>
+        <ol>
+          <li>Open phpMyAdmin in your browser (usually accessible via <code>http://localhost/phpmyadmin</code> or
+            through your hosting provider's control panel).</li>
+          <li>Log in to phpMyAdmin with your database username and password.</li>
+          <li>Click on the "New" button in the left sidebar.</li>
+          <li>Enter a name for your database and select the appropriate collation (usually
+            <code>utf8_general_ci</code>).</li>
+          <li>Click "Create".</li>
+        </ol>
+      </li>
+    </ol>
+
+    <h3>Migrations and Seeding</h3>
+    <ol class="steps">
+      <li><strong>Run migrations to set up the database schema:</strong>
+        <pre><code>cd api
+npx sequelize-cli db:migrate</code></pre>
+      </li>
+      <li><strong>Seed the database with initial data if you have seed files:</strong>
+        <pre><code>npx sequelize-cli db:seed:all</code></pre>
+      </li>
+    </ol>
+
+    <h3>Importing Database File Using phpMyAdmin</h3>
+    <ol class="steps">
+      <li>Open phpMyAdmin in your browser (usually accessible via <code>http://localhost/phpmyadmin</code> or through
+        your hosting provider's control panel).</li>
+      <li>Log in to phpMyAdmin with your database username and password.</li>
+      <li>Create a new database if you haven't done so already.</li>
+      <li>Select the newly created database from the left sidebar.</li>
+      <li>Go to the "Import" tab.</li>
+      <li>Click on the "Choose File" button and select your .sql file.</li>
+      <li>Ensure the format is set to SQL.</li>
+      <li>Click the "Go" button to start the import process.</li>
+    </ol>
+
+    <h2 id="usage">Usage</h2>
+
+    <h3>Running the Application</h3>
+    <ol class="steps">
+      <li><strong>To start the development server for both the API and the client:</strong>
+        <pre><code>
+# Start the API server from the root folder
+npm run dev
+
+# Start the client server
+cd client
+npm run dev
+                </code></pre>
+      </li>
+      <li><strong>Open <code>http://localhost:5173</code> to view the client in the browser.</strong></li>
+    </ol>
+  </div>
+</body>
+
+</html>

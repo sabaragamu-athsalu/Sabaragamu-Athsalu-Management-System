@@ -78,9 +78,9 @@ export default function SignIn() {
           <div className="flex-1">
             <Link to="/" className="">
               {theme === "light" ? (
-                <img src={LogoNew} className="h-40" alt="Flowbite Logo" />
+                <img src={Logolight} className="" alt="Flowbite Logo" />
               ) : (
-                <img src={LogoNew} className="h-40" alt="Flowbite Logo" />
+                <img src={Logodark} className="" alt="Flowbite Logo" />
               )}
             </Link>
             <p className="text-sm mt-5">
