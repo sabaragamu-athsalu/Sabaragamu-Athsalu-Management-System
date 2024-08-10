@@ -44,9 +44,9 @@ export default function Header() {
         className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
       >
         {theme === "light" ? (
-          <img src={Logolight} class="h-10" alt="Flowbite Logo" />
+          <img src={LogoNew} class="h-10" alt="Flowbite Logo" />
         ) : (
-          <img src={Logodark} class="h-10" alt="Flowbite Logo" />
+          <img src={LogoNew} class="h-10" alt="Flowbite Logo" />
         )}
       </Link>
 

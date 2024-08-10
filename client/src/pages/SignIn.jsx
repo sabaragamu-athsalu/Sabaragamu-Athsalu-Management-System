@@ -80,7 +80,7 @@ export default function SignIn() {
               {theme === "light" ? (
                 <img src={LogoNew} className="" alt="Flowbite Logo" />
               ) : (
-                <img src={Logodark} className="" alt="Flowbite Logo" />
+                <img src={LogoNew} className="" alt="Flowbite Logo" />
               )}
             </Link>
             <p className="text-sm mt-5">
