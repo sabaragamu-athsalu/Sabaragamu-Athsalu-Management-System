@@ -36,12 +36,12 @@ export default function DashUserPasswordChange() {
   const [formData, setFormData] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
+  const [createLoding, setCreateLoding] = useState(null);
+
   const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
-    console.log(formData);
-    console.log(currentUser);
   };
 
   const handleSubmit = async (e) => {
@@ -49,7 +49,7 @@ export default function DashUserPasswordChange() {
     setUpdateUserError(null);
     setUpdateUserSuccess(null);
 
-    const { email, oldpassword, newpassword, confirmnewpassword } = formData;
+    const { email, oldPassword, newPassword, confirmnewpassword } = formData;
 
     if (currentUser.email !== email) {
       setUpdateUserError("Your email is incorrect. Please try again.");
@@ -57,17 +57,17 @@ export default function DashUserPasswordChange() {
     }
 
     // Validation logic
-    if (!email || !oldpassword || !newpassword || !confirmnewpassword) {
+    if (!email || !oldPassword || !newPassword || !confirmnewpassword) {
       setUpdateUserError("All fields are required.");
       return;
     }
 
-    if (newpassword !== confirmnewpassword) {
+    if (newPassword !== confirmnewpassword) {
       setUpdateUserError("New password and confirm password do not match.");
       return;
     }
 
-    if (newpassword.length < 8) {
+    if (newPassword.length < 8) {
       setUpdateUserError("New password must be at least 8 characters long.");
       return;
     }
@@ -77,9 +77,11 @@ export default function DashUserPasswordChange() {
       return;
     }
 
+    console.log(formData);
+
     try {
-      dispatch(updateStart());
-      const res = await fetch(`/api/user/update/${currentUser.id}`, {
+      setCreateLoding(true);
+      const res = await fetch(`/api/auth/change-password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -88,14 +90,14 @@ export default function DashUserPasswordChange() {
       });
       const data = await res.json();
       if (!res.ok) {
-        dispatch(updateFailure(data.message));
+        setCreateLoding(false);
         setUpdateUserError(data.message);
       } else {
-        dispatch(updateSuccess(data.user));
-        setUpdateUserSuccess("User's profile updated successfully");
+        setCreateLoding(false);
+        setUpdateUserSuccess("Password change successfully.");
       }
     } catch (error) {
-      dispatch(updateFailure(error.message));
+      setCreateLoding(false);
       setUpdateUserError(error.message);
     }
   };
@@ -195,6 +197,12 @@ export default function DashUserPasswordChange() {
                   </Alert>
                 )}
 
+                {updateUserSuccess && (
+                  <Alert color="success" className="mt-5">
+                    {updateUserSuccess}
+                  </Alert>
+                )}
+
                 <div>
                   <div>
                     <div className="mb-2 block">
@@ -214,7 +222,7 @@ export default function DashUserPasswordChange() {
                       <Label value="Old Password" />
                     </div>
                     <TextInput
-                      id="oldpassword"
+                      id="oldPassword"
                       type={showPassword ? "text" : "password"}
                       placeholder="*********"
                       required
@@ -228,7 +236,7 @@ export default function DashUserPasswordChange() {
                       <Label value="New Password" />
                     </div>
                     <TextInput
-                      id="newpassword"
+                      id="newPassword"
                       type={showPassword ? "text" : "password"}
                       placeholder="*********"
                       required
@@ -278,8 +286,8 @@ export default function DashUserPasswordChange() {
                   </div>
                 </div>
 
-                <Button color="blue" type="submit" disabled={loading}>
-                  {loading ? (
+                <Button color="blue" type="submit">
+                  {createLoding ? (
                     <>
                       <Spinner size="sm" />
                       <span className="pl-3">Updating...</span>
