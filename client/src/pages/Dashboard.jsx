@@ -33,6 +33,7 @@ import DashProductApprovels from "../components/director/DashProductApprovels";
 import DashStoreProductApprovels from "../components/director/DashStoreProductApprovels";
 import DashSendHistory from "../components/DashSendHistory";
 import DashCreditSales from "../components/seller/DashCreditSales";
+import DashUserPasswordChange from "../components/DashUserPasswordChange";
 // import StoreKeeperDashboardHome from "../components/storeKeeper/StoreKeeperDashboardHome";
 
 export default function Dashboard() {
@@ -56,6 +57,10 @@ export default function Dashboard() {
       </div>
       {/* Profile */}
       {tab === "profile" && <DashProfile />}
+
+      {/* password-change */}
+      {tab === "password-change" && <DashUserPasswordChange />}
+
       {/* users */}
       {tab === "users" && <DashUsers />}
       {/* shops */}
@@ -158,9 +163,7 @@ export default function Dashboard() {
       {tab === "returnItems" && currentUser.role === "Admin" && (
         <DashCustomerReturnItem />
       )}
-      {
-        tab === "creditsales" &&  <DashCreditSales />
-      }
+      {tab === "creditsales" && <DashCreditSales />}
     </div>
   );
 }

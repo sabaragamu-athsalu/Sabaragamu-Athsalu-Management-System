@@ -3,6 +3,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const { errorHandler } = require("../utils/error");
+const validator = require("fastest-validator");
+const v = new validator();
+const sendEmail = require("../utils/email");
 
 dotenv.config();
 
@@ -108,7 +111,94 @@ function signIn(req, res) {
     .catch((error) => {});
 }
 
+function changePassword(req, res) {
+  var { email, oldPassword, newPassword } = req.body;
+
+  const schema = {
+    email: { type: "email" },
+    oldPassword: { type: "string", min: 6, max: 20 },
+    newPassword: { type: "string", min: 6, max: 20 },
+  };
+
+  const check = v.validate(req.body, schema);
+
+  if (check !== true) {
+    return res.status(400).json({
+      success: false,
+      message: "Validation failed",
+      errors: check,
+    });
+  }
+
+  models.User.findOne({ where: { email: email } })
+    .then((user) => {
+      if (user === null) {
+        return res.status(400).json({
+          success: false,
+          message: "User not found",
+        });
+      } else {
+        bcrypt.compare(oldPassword, user.password, function (err, result) {
+          if (result) {
+            // Check if new password is the same as old password
+            bcrypt.compare(newPassword, user.password, function (err, result) {
+              if (result) {
+                return res.status(400).json({
+                  success: false,
+                  message: "New password cannot be the same as old password",
+                });
+              } else {
+                bcrypt.genSalt(10, function (err, salt) {
+                  bcrypt.hash(newPassword, salt, function (err, hash) {
+                    models.User.update(
+                      { password: hash },
+                      { where: { email: email } }
+                    )
+                      .then(async (result) => {
+                        // Send email notification
+                        await sendEmail({
+                          to: email,
+                          subject: "Password Changed",
+                          text: "Your password has been changed successfully",
+                          html: "<p>Your password has been changed successfully</p>",
+                        });
+
+                        res.status(200).json({
+                          success: true,
+                          message: "Password changed successfully",
+                        });
+                      })
+                      .catch((error) => {
+                        res.status(500).json({
+                          success: false,
+                          message: "Internal Server Error",
+                          error: error,
+                        });
+                      });
+                  });
+                });
+              }
+            });
+          } else {
+            return res.status(400).json({
+              success: false,
+              message: "Invalid old password",
+            });
+          }
+        });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error",
+        error: error,
+      });
+    });
+}
+
 module.exports = {
   signUp: signUp,
   signIn: signIn,
+  changePassword: changePassword,
 };
