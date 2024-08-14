@@ -23,6 +23,8 @@ import { signoutSuccess } from "../redux/user/userSlice";
 import { BsFillHouseAddFill } from "react-icons/bs";
 import { FaFileCircleCheck } from "react-icons/fa6";
 import { IoDocuments } from "react-icons/io5";
+import { MdPassword } from "react-icons/md";
+import { BiSolidUserAccount } from "react-icons/bi";
 
 import { GoChecklist } from "react-icons/go";
 
@@ -159,18 +161,31 @@ export default function DashSidebar() {
                 </Link>
               )}
 
-              <Link to="/dashboard?tab=profile">
-                <Sidebar.Item
-                  className="mt-2 mb-2"
-                  active={tab === "profile"}
-                  icon={HiUser}
-                  label={currentUser.role}
-                  labelColor="dark"
-                  as="div"
-                >
-                  Profile
-                </Sidebar.Item>
-              </Link>
+              <Sidebar.Collapse icon={HiUser} label="Profile">
+                <Link to="/dashboard?tab=profile">
+                  <Sidebar.Item
+                    className="mt-2 mb-2"
+                    active={tab === "profile"}
+                    icon={BiSolidUserAccount}
+                    label={currentUser.role}
+                    labelColor="dark"
+                    as="div"
+                  >
+                    Details
+                  </Sidebar.Item>
+                </Link>
+
+                <Link to="/dashboard?tab=password-change">
+                  <Sidebar.Item
+                    className="mt-2 mb-2"
+                    active={tab === "password-change"}
+                    icon={MdPassword}
+                    as="div"
+                  >
+                    Change Password
+                  </Sidebar.Item>
+                </Link>
+              </Sidebar.Collapse>
 
               {currentUser.role === "Seller" && (
                 <>
@@ -360,16 +375,20 @@ export default function DashSidebar() {
                   </Link>
 
                   <Link to="/dashboard?tab=saleHistory">
-                    <Sidebar.Item className="mt-2 mb-2" icon={HiClipboardList}
-                    active={tab === "saleHistory"}
+                    <Sidebar.Item
+                      className="mt-2 mb-2"
+                      icon={HiClipboardList}
+                      active={tab === "saleHistory"}
                     >
                       Sales History
                     </Sidebar.Item>
                   </Link>
 
                   <Link to="/dashboard?tab=salesReport">
-                    <Sidebar.Item className="mt-2 mb-2" icon={HiTable}
-                    active={tab === "salesReport"}
+                    <Sidebar.Item
+                      className="mt-2 mb-2"
+                      icon={HiTable}
+                      active={tab === "salesReport"}
                     >
                       Sales Report
                     </Sidebar.Item>
