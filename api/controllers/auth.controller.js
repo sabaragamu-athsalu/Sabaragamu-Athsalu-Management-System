@@ -197,8 +197,64 @@ function changePassword(req, res) {
     });
 }
 
+function forgotPassword(req, res) {
+  var { email } = req.body;
+
+  const schema = {
+    email: { type: "email" },
+  };
+
+  const check = v.validate(req.body, schema);
+
+  if (check !== true) {
+    return res.status(400).json({
+      success: false,
+      message: "Validation failed",
+      errors: check,
+    });
+  }
+
+  models.User.findOne({ where: { email: email } })
+    .then(async (user) => {
+      if (user === null) {
+        return res.status(400).json({
+          success: false,
+          message: "User not found",
+        });
+      } else {
+        // Generate a token
+        const token = jwt.sign(
+          { id: user.id, email: user.email },
+          process.env.JWT_SECRET_KEY,
+          { expiresIn: "1h" }
+        );
+
+        // Send email notification
+        await sendEmail({
+          to: email,
+          subject: "Reset Password",
+          text: "Click the link below to reset your password",
+          html: `<a href="${process.env.BASE_URL}/reset-password/${token}">Reset Password</a>`,
+        });
+
+        res.status(200).json({
+          success: true,
+          message: "Reset password link sent to your email",
+        });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error",
+        error: error,
+      });
+    });
+}
+
 module.exports = {
   signUp: signUp,
   signIn: signIn,
   changePassword: changePassword,
+  forgotPassword: forgotPassword,
 };
