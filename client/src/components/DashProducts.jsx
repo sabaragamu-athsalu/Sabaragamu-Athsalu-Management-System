@@ -25,6 +25,7 @@ import {
 import { MdDeleteForever } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import Barcode from 'react-barcode';
 
 export default function DashProducts() {
   const { currentUser } = useSelector((state) => state.user);
@@ -168,6 +169,8 @@ export default function DashProducts() {
       console.log(error.message);
     }
   };
+
+  
 
   return (
     <div className="p-3 w-full">
@@ -460,6 +463,7 @@ export default function DashProducts() {
                       <TableHeadCell>Type</TableHeadCell>
                       <TableHeadCell>Manufacturer</TableHeadCell>
                       <TableHeadCell>Price</TableHeadCell>
+                      <TableHeadCell>Barcode</TableHeadCell>
                       <TableHeadCell></TableHeadCell>
                       <TableHeadCell>
                         <span className="sr-only">Edit</span>
@@ -475,6 +479,7 @@ export default function DashProducts() {
                           <TableCell>{product.itemType}</TableCell>
                           <TableCell>{product.manufacturer}</TableCell>
                           <TableCell>Rs. {product.itemPrice}</TableCell>
+                          <TableCell><Barcode width={1.2} height={50} value={product.sku} />;</TableCell>
                           <TableCell></TableCell>
                           <TableCell>
                             <Button.Group>
