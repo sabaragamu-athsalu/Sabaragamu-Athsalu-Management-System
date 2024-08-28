@@ -815,7 +815,6 @@ export default function DashUsers() {
                                 Edit
                               </Button>
                               <Button
-                                disabled
                                 onClick={() => {
                                   setShowModal(true);
                                   setUserIdToDelete(user.id);

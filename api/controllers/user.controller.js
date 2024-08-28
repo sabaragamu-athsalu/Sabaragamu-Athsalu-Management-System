@@ -452,38 +452,71 @@ function updateUserTable(req, res, next) {
   });
 }
 
-function deleteUser(req, res, next) {
-  models.User.destroy({
-    where: {
-      id: req.params.userId,
-    },
-  })
-    .then((result) => {
-      if (result === 0) {
-        return res.status(404).json({
-          success: false,
-          message: "User not found",
-        });
-      }
-      res.status(200).json({
-        success: true,
-        message: "User deleted successfully",
-      });
-    })
-    .catch((error) => {
-      if (error instanceof models.Sequelize.ForeignKeyConstraintError) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "This user cannot be deleted because they are involved in other activities.",
-        });
-      }
-      return res.status(500).json({
-        success: false,
-        message: "Internal Server Error",
-        error: error,
-      });
+// function deleteUser(req, res, next) {
+//   models.User.destroy({
+//     where: {
+//       id: req.params.userId,
+//     },
+//   })
+//     .then((result) => {
+//       if (result === 0) {
+//         return res.status(404).json({
+//           success: false,
+//           message: "User not found",
+//         });
+//       }
+//       res.status(200).json({
+//         success: true,
+//         message: "User deleted successfully",
+//       });
+//     })
+//     .catch((error) => {
+//       if (error instanceof models.Sequelize.ForeignKeyConstraintError) {
+//         return res.status(400).json({
+//           success: false,
+//           message:
+//             "This user cannot be deleted because they are involved in other activities.",
+//         });
+//       }
+//       return res.status(500).json({
+//         success: false,
+//         message: "Internal Server Error",
+//         error: error,
+//       });
+//     });
+// }
+
+async function deleteUser(req, res) {
+  const id = req.params.userId;
+
+  if (!id) {
+    return res.status(400).json({
+      success: false,
+      message: "User ID is required",
     });
+  }
+
+  const user = await models.User.deleteUser(id);
+
+  if (user.status === 404) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
+  if (user.status === 400) {
+    return res.status(400).json({
+      success: false,
+      message:
+        "This user cannot be deleted because they are involved in other activities.",
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "User deleted successfully",
+  });
 }
 
 //get user by id
