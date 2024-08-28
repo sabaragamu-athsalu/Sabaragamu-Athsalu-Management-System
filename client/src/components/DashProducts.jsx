@@ -479,7 +479,7 @@ export default function DashProducts() {
                           <TableCell>{product.itemType}</TableCell>
                           <TableCell>{product.manufacturer}</TableCell>
                           <TableCell>Rs. {product.itemPrice}</TableCell>
-                          <TableCell><Barcode width={1.2} height={50} value={product.sku} />;</TableCell>
+                          <TableCell><Barcode width={0.9} height={20} value={product.sku} fontSize={10} margin={5}/></TableCell>
                           <TableCell></TableCell>
                           <TableCell>
                             <Button.Group>
