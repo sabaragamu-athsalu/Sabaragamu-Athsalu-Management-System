@@ -15,8 +15,10 @@ import {
 } from "flowbite-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { React, useEffect, useState } from "react";
+import Barcode from "react-barcode";
 import "react-circular-progressbar/dist/styles.css";
 import { FaUserEdit } from "react-icons/fa";
+import { FaPrint } from "react-icons/fa6";
 import {
   HiHome,
   HiOutlineExclamationCircle,
@@ -25,7 +27,6 @@ import {
 import { MdDeleteForever } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import Barcode from 'react-barcode';
 
 export default function DashProducts() {
   const { currentUser } = useSelector((state) => state.user);
@@ -170,8 +171,6 @@ export default function DashProducts() {
     }
   };
 
-  
-
   return (
     <div className="p-3 w-full">
       <AnimatePresence>
@@ -210,6 +209,11 @@ export default function DashProducts() {
             >
               <HiPlusCircle className="mr-2 h-4 w-4" />
               Add Product
+            </Button>
+
+            <Button className="mb-3" color="blue" size="sm" onClick={() => {}}>
+              <FaPrint className="mr-2" />
+              Print Barcodes
             </Button>
           </div>
 
@@ -479,7 +483,15 @@ export default function DashProducts() {
                           <TableCell>{product.itemType}</TableCell>
                           <TableCell>{product.manufacturer}</TableCell>
                           <TableCell>Rs. {product.itemPrice}</TableCell>
-                          <TableCell><Barcode width={0.9} height={20} value={product.sku} fontSize={10} margin={5}/></TableCell>
+                          <TableCell>
+                            <Barcode
+                              width={0.9}
+                              height={20}
+                              value={product.sku}
+                              fontSize={10}
+                              margin={5}
+                            />
+                          </TableCell>
                           <TableCell></TableCell>
                           <TableCell>
                             <Button.Group>
@@ -519,6 +531,9 @@ export default function DashProducts() {
                               >
                                 <MdDeleteForever className="mr-3 h-4 w-4" />
                                 Delete
+                              </Button>
+                              <Button onClick={() => {}} color="gray">
+                                <FaPrint className="mr-2" />
                               </Button>
                             </Button.Group>
                           </TableCell>
