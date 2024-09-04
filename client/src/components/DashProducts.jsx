@@ -28,6 +28,9 @@ import { MdDeleteForever } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+
 export default function DashProducts() {
   const { currentUser } = useSelector((state) => state.user);
   const [products, setProducts] = useState([]);
@@ -43,6 +46,27 @@ export default function DashProducts() {
 
   const [createUserError, setCreateUserError] = useState(null);
   const [createLoding, setCreateLoding] = useState(null);
+
+  const [selectedBarcode, setSelectedBarcode] = useState(null);
+  const [selectedBarcodePrint, setSelectedBarcodePrint] = useState(null);
+
+  const handlePrintBarcode = () => {
+    const doc = new jsPDF();
+    products.forEach((product, index) => {
+      const barcodeValue = product.sku;
+      const x = 10;
+      const y = 10 + index * 30;
+      doc.text(`Barcode ${index + 1}:`, x, y);
+      doc.autoTable({
+        startY: y + 5,
+        head: [["Barcode"]],
+        body: [[barcodeValue]],
+      });
+    });
+    doc.save("barcodes.pdf");
+  };
+
+  // ...
 
   // Pagiation
   const [currentPage, setCurrentPage] = useState(1);
@@ -211,7 +235,12 @@ export default function DashProducts() {
               Add Product
             </Button>
 
-            <Button className="mb-3" color="blue" size="sm" onClick={() => {}}>
+            <Button
+              className="mb-3"
+              color="blue"
+              size="sm"
+              onClick={handlePrintBarcode}
+            >
               <FaPrint className="mr-2" />
               Print Barcodes
             </Button>
